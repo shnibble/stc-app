@@ -153,25 +153,25 @@ class MenuModule extends React.Component {
     render() {
         return (
             <>
-            <Button onClick={this.toggleMenu}>
-                <div/>
-                <div/>
-                <div/>
-            </Button>
+                <Button onClick={this.toggleMenu}>
+                    <div/>
+                    <div/>
+                    <div/>
+                </Button>
 
-            <Container id='mobile-menu-container'>
-                <div>
-                    <h2>About</h2>
-                    <button onClick={this.toggleMenu}>
-                        <div/>
-                        <div/>
-                        <div/>
-                    </button>
-                </div>
-                <p>A simple interface to help cooks find things to make using the STC API database.</p>
-                <Anchor href='https://github.com/shnibble/stc-api' target='_BLANK'>Explore the API</Anchor>
-                <Anchor href='https://github.com/shnibble/stc-app' target='_BLANK'>View on Github</Anchor>
-            </Container>
+                <Container id='mobile-menu-container'>
+                    <div>
+                        <h2>About</h2>
+                        <button onClick={this.toggleMenu}>
+                            <div/>
+                            <div/>
+                            <div/>
+                        </button>
+                    </div>
+                    <p>A simple interface to help cooks find things to make using the STC API database.</p>
+                    <Anchor href='https://github.com/shnibble/stc-api' target='_BLANK'>Explore the API</Anchor>
+                    <Anchor href='https://github.com/shnibble/stc-app' target='_BLANK'>View on Github</Anchor>
+                </Container>
             </>
         )
     }
