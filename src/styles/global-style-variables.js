@@ -1,5 +1,6 @@
 const globalStyles = {
     padding: '5px',
+    lightBlue: '#66bfff',
     blue: '#0094FF',
     lightOrange: '#ffa666',
     orange: '#FF6A00',

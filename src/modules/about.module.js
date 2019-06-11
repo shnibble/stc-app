@@ -107,8 +107,8 @@ class AboutModule extends React.Component {
                     <Container id='tablet-about-container'>
                         <div className='carrot'></div>
                         <p>A simple interface to help cooks find things to make using the STC API database.</p>                    
-                        <Anchor href='https://github.com/shnibble/stc-api' target='_BLANK'>Explore the API</Anchor>
-                        <Anchor href='https://github.com/shnibble/stc-app' target='_BLANK'>View on Github</Anchor>
+                        <Anchor href='https://github.com/shnibble/stc-api'>Explore the API</Anchor>
+                        <Anchor href='https://github.com/shnibble/stc-app'>View on Github</Anchor>
                     </Container>
                 </Button>
             </>

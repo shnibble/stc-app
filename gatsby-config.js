@@ -11,5 +11,14 @@ module.exports = {
         // Add any options here
       },
     },
+    `gatsby-transformer-remark`,
+    {
+      resolve: 'gatsby-source-apiserver',
+      options: {
+        url: 'http://localhost:3000/meta/categories',
+        name: 'categories',
+        method: 'get',
+      }
+    }
   ],
 }

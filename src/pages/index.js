@@ -1,4 +1,5 @@
 import React from 'react'
+// import { graphql } from 'gatsby'
 import styled from 'styled-components'
 
 import ui from '../styles/global-style-variables'
@@ -7,6 +8,7 @@ import '../styles/style.global.css'
 import Header from '../components/header'
 import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
+import CategoryFilter from '../components/categoryFilter'
 
 const Wrapper = styled.div`
     display: flex;
@@ -18,12 +20,10 @@ const Main = styled.main`
     flex-grow: 1;
     flex-shrink: 0;
     margin: 0 auto;
-    max-width: 900px;
-`
-const Filter = styled.div`
-    & h2 {
-        color: #0094FF;
-    }
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box; 
+    max-width: 1025px;
 `
 class Index extends React.Component {
 
@@ -56,18 +56,7 @@ class Index extends React.Component {
                 <Header screenStyle={this.state.screenStyle}/>
                 <Main>                    
                     <div id="filters">
-                        <Filter>
-                            <h2>Categories</h2>
-                            <p>What the dish is really focused on or primarily centered around.</p>
-                        </Filter>
-                        <Filter>
-                            <h2>Origins</h2>
-                            <p>From what part of the world the dish originated or became popular.</p>
-                        </Filter>
-                        <Filter>
-                            <h2>Tags</h2>
-                            <p>Further refine meals based on the following tags.</p>
-                        </Filter>
+                        <CategoryFilter screenStyle={this.state.screenStyle}/>
                     </div>
                     { (screenStyle === 'desktop')?<GetMealButton />:null }
                     <div id="results">

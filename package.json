@@ -8,6 +8,8 @@
     "babel-plugin-styled-components": "^1.10.0",
     "gatsby": "^2.8.0",
     "gatsby-plugin-styled-components": "^3.0.7",
+    "gatsby-source-apiserver": "^2.1.2",
+    "gatsby-transformer-remark": "^2.3.12",
     "react": "^16.8.6",
     "react-device-detect": "^1.6.2",
     "react-dom": "^16.8.6",
