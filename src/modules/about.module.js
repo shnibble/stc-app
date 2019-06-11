@@ -21,17 +21,54 @@ const Button = styled.button`
         color: ${ui.globalStyles.orange};
     }
 `
-const Overlay = styled.div`
+const Container = styled.div`
     display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0,0,0,0.2);
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    top: 60px;
+    right: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    box-shadow: 2px 3px 4px 1px rgba(0,0,0,0.2);
+    transition: height .25s, padding .25s, box-shadow .25s;
+    opacity: 0;
 
     &.active {
         display: block;
+        opacity: 1;
+        animation-name: fadeInOpacity;
+        animation-oteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: .25s;
+    
+        @keyframes fadeInOpacity {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    }
+
+    & .carrot {
+        position: absolute;
+        top: -20px;
+        right: 0px;
+        width: 0; 
+        height: 0; 
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;        
+        border-bottom: 20px solid #f2f2f2;
+    }
+
+    & p {
+        display: block;
+        text-align: justify;
+        height: 110px;
+        font-size: 20px;
+        color: #000;
     }
 `
 const Anchor = styled.a`
@@ -58,10 +95,6 @@ const Anchor = styled.a`
 `
 
 class AboutModule extends React.Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     toggleContainer() {
         document.getElementById('tablet-about-container').classList.toggle('active')
