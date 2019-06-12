@@ -19,6 +19,14 @@ module.exports = {
         name: 'categories',
         method: 'get',
       }
+    },
+    {
+      resolve: 'gatsby-source-apiserver',
+      options: {
+        url: 'http://localhost:3000/meta/origins',
+        name: 'origins',
+        method: 'get',
+      }
     }
   ],
 }

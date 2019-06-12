@@ -3,14 +3,10 @@ import { StaticQuery, graphql } from 'gatsby'
 
 import FilterLayout from './filterLayout'
 
-function toggleActive(ev){
-    ev.target.classList.toggle('active')
-}
-
-export default ({ screenStyle }) => (
+export default ({ screenStyle, filteredCategories, onClickFunction }) => (
     <StaticQuery 
         query={graphql`
-        query HeadingQuery {
+        query {
             allCategories {
               nodes {
                 alternative_id
@@ -27,7 +23,8 @@ export default ({ screenStyle }) => (
                     <button 
                         key={index} 
                         value={category.alternative_id} 
-                        onClick={toggleActive}
+                        onClick={onClickFunction}
+                        className={(filteredCategories.includes(category.alternative_id))?'active':null}
                         >
                         {category.name}
                     </button>

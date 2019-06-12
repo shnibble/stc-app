@@ -16,18 +16,18 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
         const Title = styled.h2`
             text-align: center;
             color: ${ui.globalStyles.blue};
-            padding: 5px;
-            font-size: 34px;
+            padding: 2px;
+            font-size: 24px;
         `
         const Description = styled.p`
             text-align: center;
             color: #000;
-            padding: 5px;
-            font-size: 24px;
+            padding: 2px;
+            font-size: 16px;
         `
         const Container = styled.div`
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             grid-gap: 5px;
             grid-auto-rows: 1fr;
             
@@ -38,9 +38,11 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 border: none;
                 border-bottom: 3px solid transparent;
                 font-weight: bold;
-                font-size: 18px;
-                height: 100px;
+                font-size: 12px;
+                height: 50px;
                 cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
@@ -111,6 +113,8 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 font-size: 18px;
                 height: 120px;
                 cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
@@ -169,6 +173,8 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
