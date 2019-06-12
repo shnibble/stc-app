@@ -23,9 +23,9 @@ const Button = styled.button`
     }
 `
 
-const GetMealButton = ({ type }) => {
+const GetMealButton = ({ getMealFunction }) => {
     return ( 
-        <Button value='TEST'>GET MEAL</Button>
+        <Button value='TEST' onClick={getMealFunction}>GET MEAL</Button>
     ) 
 }
 export default GetMealButton

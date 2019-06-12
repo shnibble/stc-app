@@ -1,6 +1,5 @@
 import React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
-import { CSSTransition } from 'react-transition-group'
 
 import FilterLayout from './filterLayout'
 
@@ -21,19 +20,14 @@ export default ({ screenStyle, filteredOrigins, onClickFunction }) => (
                 {data.allOrigins.nodes.map(( origin , index) => (
                     (origin.name)
                     ?
-                    <CSSTransition
-                        timeout={300}
-                        classNames='active'
+                    <button 
+                        key={index} 
+                        value={origin.name} 
+                        onClick={onClickFunction}
+                        className={(filteredOrigins.includes(origin.name))?'active':null}
                         >
-                        <button 
-                            key={index} 
-                            value={origin.alternative_id} 
-                            onClick={onClickFunction}
-                            className={(filteredOrigins.includes(origin.alternative_id))?'active':null}
-                            >
-                            {origin.name}
-                        </button>
-                    </CSSTransition>
+                        {origin.name}
+                    </button>
                     :
                     null                        
                 ))}

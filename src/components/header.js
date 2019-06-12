@@ -9,7 +9,7 @@ import AboutModule from '../modules/about.module'
 import MenuModule from '../modules/menu.module'
 
 
-const Header = ({ screenStyle }) => {
+const Header = ({ screenStyle, getMealFunction }) => {
     const Container = styled.header`
         flex-shrink: 0;
         display: flex;
@@ -32,7 +32,7 @@ const Header = ({ screenStyle }) => {
                 </HeaderSection>
                 <HeaderSection flex='1 1 auto'>
                     <Title>Something to Cook</Title>
-                    <GetMealButton />
+                    <GetMealButton getMealFunction={getMealFunction}/>
                 </HeaderSection>
             </Container>
         )
@@ -63,7 +63,7 @@ const Header = ({ screenStyle }) => {
                     <AboutModule/>
                 </HeaderSection>
                 <HeaderSection flex='0 0 140px'>
-                <GetMealButton />
+                <GetMealButton getMealFunction={getMealFunction}/>
                 </HeaderSection>
             </Container>
         )

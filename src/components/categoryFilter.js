@@ -22,9 +22,9 @@ export default ({ screenStyle, filteredCategories, onClickFunction }) => (
                     ?
                     <button 
                         key={index} 
-                        value={category.alternative_id} 
+                        value={category.name} 
                         onClick={onClickFunction}
-                        className={(filteredCategories.includes(category.alternative_id))?'active':null}
+                        className={(filteredCategories.includes(category.name))?'active':null}
                         >
                         {category.name}
                     </button>
