@@ -1,7 +1,6 @@
 import React from 'react'
-// import { graphql } from 'gatsby'
-import styled from 'styled-components'
 import axios from 'axios'
+import styled from 'styled-components'
 
 import ui from '../styles/global-style-variables'
 import '../styles/style.global.css'
@@ -32,14 +31,12 @@ const initialState = {
     screenStyle: 'mobile',
     filteredCategories: [],
     filteredOrigins: [],
-    result: {
-        loading: false,
-        error: false,
-        loaded: false,
-        meal: {
-            name: '',
-            description: ''
-        }
+    loading: false,
+    error: false,
+    loaded: false,
+    meal: {
+        name: '',
+        description: ''
     }
 }
 class Index extends React.Component {
@@ -51,11 +48,29 @@ class Index extends React.Component {
 
     processScreenSize = () => {
         if (window.innerWidth <= ui.screenSize.mobile) {
-            this.setState({ screenStyle: 'mobile' })
-        } else if (window.innerWidth <= ui.screenSize.desktop ) {
-            this.setState({ screenStyle: 'tablet' })
-        } else {
-            this.setState({ screenStyle: 'desktop' })
+            if (this.state.screenStyle !== 'mobile') {
+                this.setState({ screenStyle: 'mobile' })
+            }            
+        } else if (window.innerWidth <= ui.screenSize.desktop) {
+            if (this.state.screenStyle !== 'tablet') {
+                this.setState({ screenStyle: 'tablet' })
+            }
+            
+        } else if (this.state.screenStyle !== 'desktop') {
+            this.setState({ screenStyle: 'desktop' })         
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if  (
+                nextState.screenStyle !== this.state.screenStyle ||
+                nextState.loading !== this.state.loading ||
+                nextState.error !== this.state.error ||
+                nextState.loaded !== this.state.loaded
+            ) {
+                return true
+            } else {
+                return false
         }
     }
 
@@ -63,13 +78,9 @@ class Index extends React.Component {
         // window resizing
         window.addEventListener('resize', this.processScreenSize)
         this.processScreenSize()
-
-        // retrieve meal from stc API
-        //this.fetchMeal()
     }
 
     toggleFilteredCategory = (ev) => {
-        // ev.target.classList.toggle('active')
         const name = ev.target.value
         const tempArray = this.state.filteredCategories.slice()
         const activeIndex = tempArray.indexOf(name)
@@ -78,20 +89,13 @@ class Index extends React.Component {
         } else {
             tempArray.push(name)
         }
-
-        // TODO {{ setTimeout works to fix CSS transitions but causes issues when changing filters quickly. Need another
-        // solution but in the meantime this works and just skips the smooth looking transitions
-        // }}
-        // setTimeout(() => {
-            this.setState({
-                filteredCategories: tempArray
-            })
-        // }, 250)
+        this.setState({
+            filteredCategories: tempArray
+        })
         
     }
 
-    toggleFilteredOrigin= (ev) => {
-        // ev.target.classList.toggle('active')
+    toggleFilteredOrigin = (ev) => {
         const name = ev.target.value
         const tempArray = this.state.filteredOrigins.slice()
         const activeIndex = tempArray.indexOf(name)
@@ -100,65 +104,21 @@ class Index extends React.Component {
         } else {
             tempArray.push(name)
         }
-
-        // TODO {{ setTimeout works to fix CSS transitions but causes issues when changing filters quickly. Need another
-        // solution but in the meantime this works and just skips the smooth looking transitions
-        // }}
-        // setTimeout(() => {
-            this.setState({
-                filteredOrigins: tempArray
-            })
-        // }, 250)
-    }
-
-    render() {
-        const { screenStyle } = this.state
-        return (
-            <Wrapper>
-                <Header screenStyle={this.state.screenStyle} getMealFunction={this.fetchMeal}/>
-                <Main>                    
-                    <div id="filters">
-                        <CategoryFilter screenStyle={this.state.screenStyle} filteredCategories={this.state.filteredCategories} onClickFunction={this.toggleFilteredCategory}/>
-                        <OriginFilter screenStyle={this.state.screenStyle} filteredOrigins={this.state.filteredOrigins} onClickFunction={this.toggleFilteredOrigin}/>
-                    </div>
-                    { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
-                    <div id="results">
-                        {
-                            this.state.result.loading
-                            ?
-                            <p>Loading Meal...</p> 
-                            : this.state.result.error
-                                ?
-                                <p>Could not load a meal with those parameters. Try something less specific.</p>
-                                : this.state.result.loaded 
-                                    ?
-                                    <>
-                                        <h3>Result</h3> 
-                                        <p>Name: {this.state.result.meal.name}</p>
-                                        <p>Description: {this.state.result.meal.description}</p>
-                                    </>
-                                    :
-                                    null
-                        }                        
-                    </div>
-                </Main>
-                { (screenStyle === 'desktop')?<Footer />:null }
-            </Wrapper>
-        )
+        this.setState({
+            filteredOrigins: tempArray
+        })
     }
 
     fetchMeal = () => {
-        this.setState({ result: { loading: true }})
+        this.setState({ loading: true })
         
         // build query string
         let firstParam = true
         const queryStringCategories = this.state.filteredCategories.map((cat) => {
             if (firstParam) {
                 firstParam = false
-                console.log("returning", `?categories[]=${cat}`)
                 return `?categories[]=${cat}`
             } else {
-                console.log("returning", `&categories[]=${cat}`)
                 return `&categories[]=${cat}`
             }
             
@@ -180,7 +140,7 @@ class Index extends React.Component {
             .then(meal => {
                 const mealName = meal.data[0].name
                 const mealDescription = meal.data[0].description
-                this.setState({ result: { 
+                this.setState({  
                     loading: false,
                     error: false,
                     loaded: true, 
@@ -188,15 +148,51 @@ class Index extends React.Component {
                         name: mealName,
                         description: mealDescription
                     }
-                }})
+                })
             })
             .catch(err => {
-                this.setState({ result: { 
+                this.setState({ 
                     loading: false, 
                     loaded: false, 
                     error: true 
-                }})
+                })
             })
+    }
+    
+    render() {
+        const { screenStyle } = this.state
+        return (
+            <Wrapper>
+                <Header screenStyle={this.state.screenStyle} getMealFunction={this.fetchMeal}/>
+                <Main>                    
+                    <div id="filters">
+                        <CategoryFilter screenStyle={this.state.screenStyle} filter={this.state.filteredCategories} onClickFunction={this.toggleFilteredCategory} />
+                        <OriginFilter screenStyle={this.state.screenStyle} filter={this.state.filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                    </div>
+                    { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
+                    <div id="results">
+                        {
+                            this.state.loading
+                            ?
+                            <p>Loading Meal...</p> 
+                            : this.state.error
+                                ?
+                                <p>Could not load a meal with those parameters. Try something less specific.</p>
+                                : this.state.loaded 
+                                    ?
+                                    <>
+                                        <h3>Result</h3> 
+                                        <p>Name: {this.state.meal.name}</p>
+                                        <p>Description: {this.state.meal.description}</p>
+                                    </>
+                                    :
+                                    null
+                        }                        
+                    </div>
+                </Main>
+                { (screenStyle === 'desktop')?<Footer />:null }
+            </Wrapper>
+        )
     }
 }
 

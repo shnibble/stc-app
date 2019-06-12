@@ -2,8 +2,9 @@ import React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
 
 import FilterLayout from './filterLayout'
+import FilterContainer from './filterContainer'
 
-export default ({ screenStyle, filteredCategories, onClickFunction }) => (
+export default ({ screenStyle, filter, onClickFunction }) => (
     <StaticQuery 
         query={graphql`
         query {
@@ -16,21 +17,8 @@ export default ({ screenStyle, filteredCategories, onClickFunction }) => (
           }          
         `}
         render={data => (
-            <FilterLayout screenStyle={screenStyle} title={`Categories`} description={`What the dish is really focused on or primarily centered around.`}>
-                {data.allCategories.nodes.map(( category , index) => (
-                    (category.name)
-                    ?
-                    <button 
-                        key={index} 
-                        value={category.name} 
-                        onClick={onClickFunction}
-                        className={(filteredCategories.includes(category.name))?'active':null}
-                        >
-                        {category.name}
-                    </button>
-                    :
-                    null                        
-                ))}
+            <FilterLayout screenStyle={screenStyle} title={`Origins`} description={`From what part of the world the dish originated or became popular.`}>
+                <FilterContainer data={data.allCategories.nodes} filter={filter} onClickFunction={onClickFunction} />
             </FilterLayout> 
         )}
     />

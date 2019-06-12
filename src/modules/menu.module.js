@@ -145,9 +145,15 @@ const Anchor = styled.a`
 `
 
 class MenuModule extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            active: false
+        }
+    }
 
-    toggleMenu() {
-        document.getElementById('mobile-menu-container').classList.toggle('active')
+    toggleMenu = () => {
+        this.setState({ active: !this.state.active })
     }
 
     render() {
@@ -159,7 +165,7 @@ class MenuModule extends React.Component {
                     <div/>
                 </Button>
 
-                <Container id='mobile-menu-container'>
+                <Container className={(this.state.active)?'active':null}>
                     <div>
                         <h2>About</h2>
                         <button onClick={this.toggleMenu}>

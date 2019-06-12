@@ -2,8 +2,9 @@ import React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
 
 import FilterLayout from './filterLayout'
+import FilterContainer from './filterContainer'
 
-export default ({ screenStyle, filteredOrigins, onClickFunction }) => (
+export default ({ screenStyle, filter, onClickFunction }) => (
     <StaticQuery 
         query={graphql`
         query {
@@ -17,20 +18,7 @@ export default ({ screenStyle, filteredOrigins, onClickFunction }) => (
         `}
         render={data => (
             <FilterLayout screenStyle={screenStyle} title={`Origins`} description={`From what part of the world the dish originated or became popular.`}>
-                {data.allOrigins.nodes.map(( origin , index) => (
-                    (origin.name)
-                    ?
-                    <button 
-                        key={index} 
-                        value={origin.name} 
-                        onClick={onClickFunction}
-                        className={(filteredOrigins.includes(origin.name))?'active':null}
-                        >
-                        {origin.name}
-                    </button>
-                    :
-                    null                        
-                ))}
+                <FilterContainer data={data.allOrigins.nodes} filter={filter} onClickFunction={onClickFunction} />
             </FilterLayout> 
         )}
     />

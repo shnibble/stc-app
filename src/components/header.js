@@ -32,7 +32,7 @@ const Header = ({ screenStyle, getMealFunction }) => {
                 </HeaderSection>
                 <HeaderSection flex='1 1 auto'>
                     <Title>Something to Cook</Title>
-                    <GetMealButton getMealFunction={getMealFunction}/>
+                    <GetMealButton getMealFunction={getMealFunction} />
                 </HeaderSection>
             </Container>
         )
@@ -63,7 +63,7 @@ const Header = ({ screenStyle, getMealFunction }) => {
                     <AboutModule/>
                 </HeaderSection>
                 <HeaderSection flex='0 0 140px'>
-                <GetMealButton getMealFunction={getMealFunction}/>
+                <GetMealButton getMealFunction={getMealFunction} />
                 </HeaderSection>
             </Container>
         )

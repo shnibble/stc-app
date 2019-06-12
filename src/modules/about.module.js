@@ -95,16 +95,22 @@ const Anchor = styled.a`
 `
 
 class AboutModule extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            active: false
+        }
+    }
 
-    toggleContainer() {
-        document.getElementById('tablet-about-container').classList.toggle('active')
+    toggleContainer = () => {
+        this.setState({ active: !this.state.active })
     }
 
     render() {
         return (
             <>
                 <Button onClick={this.toggleContainer}>About
-                    <Container id='tablet-about-container'>
+                    <Container className={(this.state.active)?'active':null}>
                         <div className='carrot'></div>
                         <p>A simple interface to help cooks find things to make using the STC API database.</p>                    
                         <Anchor href='https://github.com/shnibble/stc-api'>Explore the API</Anchor>
