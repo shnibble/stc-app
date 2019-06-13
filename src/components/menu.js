@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import ui from '../styles/global-style-variables'
+import global from '../variables.global'
 
 const Button = styled.button`
     flex-basis: 50px;
@@ -17,7 +17,7 @@ const Button = styled.button`
         position: absolute;
         width: 50px;
         height: 10px;
-        background-color: ${ui.globalStyles.offWhite};
+        background-color: ${global.colors.offWhite};
         transition: right .25s ease-in-out;
     }
     & > div:nth-child(1) {
@@ -44,7 +44,7 @@ const Container = styled.div`
     height: 100%;
     width: 100%;
     box-sizing: border-box; 
-    border: 2px solid ${ui.globalStyles.blue};
+    border: 2px solid ${global.colors.blue};
     background-color: rgba(255,255,255,0.95);
     transition: left .25s ease-out;
 
@@ -54,7 +54,7 @@ const Container = styled.div`
 
     & div {
         position: relative;
-        background-color: ${ui.globalStyles.blue};
+        background-color: ${global.colors.blue};
         height: 80px;
         padding: 7px;
 
@@ -69,7 +69,7 @@ const Container = styled.div`
             right: 15px;
             width: 50px;
             height: 50px;
-            color: ${ui.globalStyles.offWhite};
+            color: ${global.colors.offWhite};
             background: none;
             border: none;
             cursor: pointer;
@@ -78,7 +78,7 @@ const Container = styled.div`
                 position: absolute;
                 width: 50px;
                 height: 10px;
-                background-color: ${ui.globalStyles.offWhite};
+                background-color: ${global.colors.offWhite};
                 transition: right .25s ease-in-out, transform .25s ease-in-out, opacity .1s;
                 padding: 0;
             }
@@ -100,7 +100,7 @@ const Container = styled.div`
                 right: 4px;
                 border-top: 14px solid transparent;
                 border-bottom: 14px solid transparent;                 
-                border-right: 14px solid ${ui.globalStyles.offWhite};
+                border-right: 14px solid ${global.colors.offWhite};
                 opacity: 0;
             }
             &:hover > div:nth-child(1) {
@@ -124,7 +124,7 @@ const Container = styled.div`
 `
 const Anchor = styled.a`
     display: block;
-    background: ${ui.globalStyles.orange};
+    background: ${global.colors.orange};
     color: #000;
     padding: 10px;
     margin: 10px;

@@ -1,13 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import ui from '../styles/global-style-variables'
+import global from '../variables.global'
 
-
-
-const FilterLayout = ({screenStyle, title, description, children}) => {
-    
+const FilterLayout = ({screenStyle, title, description, children}) => {    
     if (screenStyle === 'desktop') {
-
         const Layout = styled.div`
             margin: 10px auto;
             padding: 15px;
@@ -15,7 +11,7 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
         `
         const Title = styled.h2`
             text-align: center;
-            color: ${ui.globalStyles.blue};
+            color: ${global.colors.blue};
             padding: 2px;
             font-size: 24px;
         `
@@ -46,15 +42,15 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
-                    background-color: ${ui.globalStyles.orange};
+                    background-color: ${global.colors.orange};
                     color: #000;
                 }
                 &:focus {
-                    border-color: ${ui.globalStyles.lightBlue};
+                    border-color: ${global.colors.lightBlue};
                     outline: none;
                 }
                 &:hover {
-                    border-color: ${ui.globalStyles.blue};
+                    border-color: ${global.colors.blue};
                     outline: none;
                 }
             }
@@ -80,7 +76,7 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
         `
         const Title = styled.h2`
             text-align: left;
-            color: ${ui.globalStyles.blue};
+            color: ${global.colors.blue};
             padding: 5px;
             font-size: 34px;
         `
@@ -118,15 +114,15 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
-                    background-color: ${ui.globalStyles.orange};
+                    background-color: ${global.colors.orange};
                     color: #000;
                 }
                 &:focus {
-                    border-color: ${ui.globalStyles.lightBlue};
+                    border-color: ${global.colors.lightBlue};
                     outline: none;
                 }
                 &:hover {
-                    border-color: ${ui.globalStyles.blue};
+                    border-color: ${global.colors.blue};
                     outline: none;
                 }
             }
@@ -152,7 +148,7 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
         `
         const Title = styled.h2`
             text-align: center;
-            color: ${ui.globalStyles.blue};
+            color: ${global.colors.blue};
             padding: 5px;
             font-size: 38px;
         `
@@ -178,15 +174,15 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
-                    background-color: ${ui.globalStyles.orange};
+                    background-color: ${global.colors.orange};
                     color: #000;
                 }
                 &:focus {
-                    border-color: ${ui.globalStyles.lightBlue};
+                    border-color: ${global.colors.lightBlue};
                     outline: none;
                 }
                 &:hover {
-                    border-color: ${ui.globalStyles.blue};
+                    border-color: ${global.colors.blue};
                     outline: none;
                 }
             }
@@ -199,10 +195,7 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 </Container>
             </Layout>
         )
-
     }
-    
-    
 }
 
 export default FilterLayout

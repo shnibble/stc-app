@@ -1,6 +1,5 @@
 import React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
-
 import FilterLayout from './filterLayout'
 import FilterContainer from './filterContainer'
 

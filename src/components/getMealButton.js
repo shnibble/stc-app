@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import ui from '../styles/global-style-variables'
+import global from '../variables.global'
 
 const Button = styled.button`
-    color: ${ui.globalStyles.offWhite};
-    background: ${ui.globalStyles.orange};
+    color: ${global.colors.offWhite};
+    background: ${global.colors.orange};
     border: none;
     border-radius: 4px;
     width: 100%;
@@ -22,10 +22,10 @@ const Button = styled.button`
         box-shadow: 0 0 5px 3px rgba(0,0,0,0.4);
     }
 `
-
 const GetMealButton = ({getMealFunction}) => {    
     return ( 
         <Button value='Get Meal' onClick={getMealFunction}>GET MEAL</Button>
-    ) 
+    )
 }
+
 export default GetMealButton

@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import ui from '../styles/global-style-variables'
+import global from '../variables.global'
 
 const Container = styled.footer`
     flex-shrink: 0;
-    background: ${ui.globalStyles.blue};
-    color: ${ui.globalStyles.offWhite};
+    background: ${global.colors.blue};
+    color: ${global.colors.offWhite};
     padding: 5px;
     text-align: center;
 
@@ -13,19 +13,18 @@ const Container = styled.footer`
         margin: 0 10px;
 
         a {
-            color: ${ui.globalStyles.offWhite};
+            color: ${global.colors.offWhite};
             transition: color .25s ease-out;
         }
         a:focus {
-            color: ${ui.globalStyles.lightOrange};
+            color: ${global.colors.lightOrange};
             outline: none;
         }
         a:hover {
-            color: ${ui.globalStyles.orange};
+            color: ${global.colors.orange};
         }
     }
 `
-
 const Footer = () => {
     return (
         <Container>

@@ -1,24 +1,24 @@
 import React from 'react'
 import styled from 'styled-components'
-import ui from '../styles/global-style-variables'
+import global from '../variables.global'
 
 const Button = styled.button`
     position: relative;
     background: none;
     border: none;
     text-decoration: underline;
-    color: ${ui.globalStyles.offWhite};
+    color: ${global.colors.offWhite};
     font-size: 24px;
     padding: 10px;
     cursor: pointer;
     transition: color .25s ease-out;
 
     &:focus {
-        color: ${ui.globalStyles.lightOrange};
+        color: ${global.colors.lightOrange};
         outline: none;
     }
     &:hover {
-        color: ${ui.globalStyles.orange};
+        color: ${global.colors.orange};
     }
 `
 const Container = styled.div`
@@ -73,7 +73,7 @@ const Container = styled.div`
 `
 const Anchor = styled.a`
     display: inline-block;
-    background: ${ui.globalStyles.orange};
+    background: ${global.colors.orange};
     color: #000;
     padding: 10px;
     width: 135px;

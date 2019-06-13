@@ -1,10 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
-
-import ui from '../styles/global-style-variables'
 import '../styles/style.global.css'
-
+import global from '../variables.global'
 import Header from '../components/header'
 import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
@@ -26,7 +24,6 @@ const Main = styled.main`
     box-sizing: border-box; 
     max-width: 1025px;
 `
-
 const initialState = {
     screenStyle: 'mobile',
     filteredCategories: [],
@@ -39,19 +36,19 @@ const initialState = {
         description: ''
     }
 }
-class Index extends React.Component {
 
+class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = initialState
     }
 
     processScreenSize = () => {
-        if (window.innerWidth <= ui.screenSize.mobile) {
+        if (window.innerWidth <= global.screenSizes.mobile) {
             if (this.state.screenStyle !== 'mobile') {
                 this.setState({ screenStyle: 'mobile' })
             }            
-        } else if (window.innerWidth <= ui.screenSize.desktop) {
+        } else if (window.innerWidth <= global.screenSizes.desktop) {
             if (this.state.screenStyle !== 'tablet') {
                 this.setState({ screenStyle: 'tablet' })
             }
