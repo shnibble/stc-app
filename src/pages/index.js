@@ -43,6 +43,34 @@ class Index extends React.Component {
         this.state = initialState
     }
 
+    saveStateToLocalStorage = () => {
+        const array_1 = [...this.state.filteredCategories]
+        const array_2 = [...this.state.filteredOrigins]
+        localStorage.setItem('filteredCategories', JSON.stringify(array_1))
+        localStorage.setItem('filteredOrigins', JSON.stringify(array_2))
+    }
+
+    pullStateFromLocalStorage = () => {
+        if (localStorage.hasOwnProperty('filteredCategories')) {
+            let value = localStorage.getItem('filteredCategories')
+            try {
+                value = JSON.parse(value)
+                this.setState({ filteredCategories: value })
+            } catch(e) {
+                this.SetState({ filteredCategories: value })
+            }
+        }
+        if (localStorage.hasOwnProperty('filteredOrigins')) {
+            let value = localStorage.getItem('filteredOrigins')
+            try {
+                value = JSON.parse(value)
+                this.setState({ filteredOrigins: value })
+            } catch(e) {
+                this.SetState({ filteredOrigins: value })
+            }
+        }
+    }
+
     processScreenSize = () => {
         if (window.innerWidth <= global.screenSizes.mobile) {
             if (this.state.screenStyle !== 'mobile') {
@@ -71,13 +99,15 @@ class Index extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
+        this.pullStateFromLocalStorage()
+
         // window resizing
         window.addEventListener('resize', this.processScreenSize)
         this.processScreenSize()
     }
 
-    toggleFilteredCategory = (ev) => {
+    toggleFilteredCategory = async (ev) => {
         const name = ev.target.value
         const tempArray = this.state.filteredCategories.slice()
         const activeIndex = tempArray.indexOf(name)
@@ -86,13 +116,13 @@ class Index extends React.Component {
         } else {
             tempArray.push(name)
         }
-        this.setState({
+        await this.setState({
             filteredCategories: tempArray
         })
-        
+        this.saveStateToLocalStorage()
     }
 
-    toggleFilteredOrigin = (ev) => {
+    toggleFilteredOrigin = async (ev) => {
         const name = ev.target.value
         const tempArray = this.state.filteredOrigins.slice()
         const activeIndex = tempArray.indexOf(name)
@@ -101,9 +131,10 @@ class Index extends React.Component {
         } else {
             tempArray.push(name)
         }
-        this.setState({
+        await this.setState({
             filteredOrigins: tempArray
         })
+        this.saveStateToLocalStorage()
     }
 
     fetchMeal = () => {
