@@ -10,19 +10,30 @@ import CategoryFilter from '../components/categoryFilter'
 import OriginFilter from '../components/originFilter'
 
 const Wrapper = styled.div`
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
-    min-height: 100vh;
     flex-direction: column;
     align-items: stretch;
 `
 const Main = styled.main`
+    height: 0px;
     flex-grow: 1;
     flex-shrink: 0;
     margin: 0 auto;
     padding: 5px;
     width: 100%;
     box-sizing: border-box; 
-    max-width: 1025px;
+    overflow-y: auto;
+    text-align: center;
+
+    & > div, & > button {
+        max-width: 1025px;
+        margin: 0 auto;
+    }
 `
 const initialState = {
     screenStyle: 'mobile',

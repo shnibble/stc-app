@@ -15,7 +15,7 @@ const Header = ({ screenStyle, getMealFunction }) => {
         color: ${global.colors.offWhite};
         min-height: 80px;
         text-align: center;
-        align-items: center;    
+        align-items: center;
         `
     if (screenStyle === 'mobile') {
         const Title = styled.h1`
