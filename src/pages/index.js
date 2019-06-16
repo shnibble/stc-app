@@ -8,6 +8,7 @@ import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
 import CategoryFilter from '../components/categoryFilter'
 import OriginFilter from '../components/originFilter'
+import Result from '../components/result'
 
 const Wrapper = styled.div`
     position: fixed;
@@ -32,7 +33,7 @@ const Main = styled.main`
 
     & > div, & > button {
         max-width: 1025px;
-        margin: 0 auto;
+        margin: 10px auto;
     }
 `
 const initialState = {
@@ -149,7 +150,7 @@ class Index extends React.Component {
     }
 
     fetchMeal = () => {
-        this.setState({ loading: true })
+        this.setState({ loading: true, error: false, loaded: false })
         
         // build query string
         let firstParam = true
@@ -177,15 +178,17 @@ class Index extends React.Component {
         axios
             .get(`http://localhost:3000/meals${queryString}`)
             .then(meal => {
-                const mealName = meal.data[0].name
-                const mealDescription = meal.data[0].description
+                const { name, description, categories, origins, tags } = meal.data[0]
                 this.setState({  
                     loading: false,
                     error: false,
                     loaded: true, 
                     meal: {
-                        name: mealName,
-                        description: mealDescription
+                        name: name,
+                        description: description,
+                        categories: categories,
+                        origins: origins,
+                        tags: tags
                     }
                 })
             })
@@ -199,35 +202,18 @@ class Index extends React.Component {
     }
     
     render() {
-        const { screenStyle } = this.state
+        const { screenStyle, filteredCategories, filteredOrigins } = this.state
         return (
             <Wrapper>
-                <Header screenStyle={this.state.screenStyle} getMealFunction={this.fetchMeal}/>
-                <Main>                    
+                <Header screenStyle={screenStyle} getMealFunction={this.fetchMeal}/>
+                <Main>       
+                    { (screenStyle === 'mobile' || screenStyle === 'tablet')?<Result data={this.state} />:null } 
                     <div id="filters">
-                        <CategoryFilter screenStyle={this.state.screenStyle} filter={this.state.filteredCategories} onClickFunction={this.toggleFilteredCategory} />
-                        <OriginFilter screenStyle={this.state.screenStyle} filter={this.state.filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                        <CategoryFilter screenStyle={screenStyle} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
+                        <OriginFilter screenStyle={screenStyle} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
                     </div>
                     { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
-                    <div id="results">
-                        {
-                            this.state.loading
-                            ?
-                            <p>Loading Meal...</p> 
-                            : this.state.error
-                                ?
-                                <p>Could not load a meal with those parameters. Try something less specific.</p>
-                                : this.state.loaded 
-                                    ?
-                                    <>
-                                        <h3>Result</h3> 
-                                        <p>Name: {this.state.meal.name}</p>
-                                        <p>Description: {this.state.meal.description}</p>
-                                    </>
-                                    :
-                                    null
-                        }                        
-                    </div>
+                    { (screenStyle === 'desktop')?<Result data={this.state} />:null } 
                 </Main>
                 { (screenStyle === 'desktop')?<Footer />:null }
             </Wrapper>
