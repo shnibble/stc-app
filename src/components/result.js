@@ -29,7 +29,6 @@ const Alert = styled.div`
 class Result extends React.Component {
     constructor(props) {
         super(props)
-        console.log('result.js constructing')
         this.state = {
             error: this.props.data.error || false,
             loading: this.props.data.loading || false,
@@ -49,9 +48,7 @@ class Result extends React.Component {
             meal: nextProps.data.meal
         })
         const newHeight = elStyle.getPropertyValue('height')
-        console.log(`oldHeight: ${oldHeight} | newHeight: ${newHeight}`)
         el.style.height = oldHeight
-        console.log('setting height to:', oldHeight)
         setTimeout(() => {
             el.style.height = newHeight
         }, 1)
@@ -76,7 +73,7 @@ class Result extends React.Component {
                             <hr/>
                             <p><strong>Categories:</strong> {meal.categories.join(', ')}</p>
                             <p><strong>Origins:</strong> {meal.origins.join(', ')}</p>
-                            <p><strong>Tags:</strong> {meal.tags.join(', ')}</p>
+                            {(meal.tags[0] !== null)?<p><strong>Tags:</strong> {meal.tags.join(', ')}</p>:null}
                         </div>
                         :(!error)
                             ?<Alert>
