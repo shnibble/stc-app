@@ -101,8 +101,7 @@ class Index extends React.Component {
         if  (
                 nextState.screenStyle !== this.state.screenStyle ||
                 nextState.loading !== this.state.loading ||
-                nextState.error !== this.state.error ||
-                nextState.loaded !== this.state.loaded
+                nextState.error !== this.state.error 
             ) {
                 return true
             } else {
