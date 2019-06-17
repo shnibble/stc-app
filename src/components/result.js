@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-// import global from '../variables.global'
+import { scrollMainToTop } from '../functions'
 
 const Container = styled.div`
     position: relative;
@@ -31,6 +31,7 @@ class Result extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            screenStyle: this.props.data.screenStyle,
             error: this.props.data.error || false,
             loading: this.props.data.loading || false,
             meal: this.props.data.meal || null
@@ -53,6 +54,10 @@ class Result extends React.Component {
         setTimeout(() => {
             el.style.height = newHeight
         }, 1)
+
+        if (this.state.screenStyle !== 'desktop') {
+            scrollMainToTop()
+        }        
     }
 
     render() {
