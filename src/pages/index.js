@@ -42,7 +42,6 @@ const initialState = {
     filteredOrigins: [],
     loading: false,
     error: false,
-    loaded: false,
     meal: {
         name: '',
         description: ''
@@ -150,7 +149,7 @@ class Index extends React.Component {
     }
 
     fetchMeal = () => {
-        this.setState({ loading: true, error: false, loaded: false })
+        this.setState({ loading: true, error: false })
         
         // build query string
         let firstParam = true
@@ -182,7 +181,6 @@ class Index extends React.Component {
                 this.setState({  
                     loading: false,
                     error: false,
-                    loaded: true, 
                     meal: {
                         name: name,
                         description: description,
@@ -194,8 +192,7 @@ class Index extends React.Component {
             })
             .catch(err => {
                 this.setState({ 
-                    loading: false, 
-                    loaded: false, 
+                    loading: false,
                     error: true 
                 })
             })
