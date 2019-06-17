@@ -74,6 +74,7 @@ class Result extends React.Component {
                             <p><strong>Categories:</strong> {meal.categories.join(', ')}</p>
                             <p><strong>Origins:</strong> {meal.origins.join(', ')}</p>
                             {(meal.tags[0] !== null)?<p><strong>Tags:</strong> {meal.tags.join(', ')}</p>:null}
+                            {(meal.variations[0] !== null)?<p><strong>Variations:</strong> {meal.variations.join(', ')}</p>:null}
                         </div>
                         :(!error)
                             ?<Alert>

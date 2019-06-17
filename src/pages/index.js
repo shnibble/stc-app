@@ -176,7 +176,7 @@ class Index extends React.Component {
         axios
             .get(`http://localhost:3000/meals${queryString}`)
             .then(meal => {
-                const { name, description, categories, origins, tags } = meal.data[0]
+                const { name, description, categories, origins, tags, variations } = meal.data[0]
                 this.setState({  
                     loading: false,
                     error: false,
@@ -185,7 +185,8 @@ class Index extends React.Component {
                         description: description,
                         categories: categories,
                         origins: origins,
-                        tags: tags
+                        tags: tags,
+                        variations: variations
                     }
                 })
             })
