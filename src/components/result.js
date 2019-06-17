@@ -6,8 +6,9 @@ const Container = styled.div`
     position: relative;
     background: #f2f2f2;
     padding: 15px;
-    min-height: 50px;
+    min-height: 70px;
     overflow: hidden;
+    box-sizing: border-box; 
     box-shadow: 0 0 3px 1px rgba(0,0,0,0.2);
     transition: height .25s;
 `
