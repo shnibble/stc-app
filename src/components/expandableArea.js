@@ -11,37 +11,58 @@ class ExpandableArea extends React.Component {
         }
         this.checked = false
         this.expandFunction = this.props.expandFunction
+        this.collapseFunction = this.props.collapseFunction
+        this.windowResizeTimeout = false
     }
 
-    componentWillReceiveProps = () => {
-        this.setState({ 
-            needed: false, 
-            active: false,
-            collapsedHeight: this.props.collapsedHeight
-        })
+    windowListener = () => {
+        clearTimeout(this.windowResizeTimeout)
+        this.windowResizeTimeout = setTimeout(this.calculateHeightDifference, 250)
     }
 
     calculateHeightDifference = () => {
         const container = document.getElementById('result-expandable-container')
         const content = document.getElementById('result-expandable-content')
-
         const containerHeight = container.offsetHeight
         const contentHeight = content.offsetHeight
 
         if (contentHeight > containerHeight) {
-            this.setState({ needed: true })
+            this.setState({ needed: true, active: false })
             this.checked = true
+            this.collapseFunction()
         } else {
-            this.setState({ needed: false})
+            this.setState({ needed: false, active: false })
             this.checked = true
         }
     }
 
-    componentDidMount() {
+    expand = () => {
+        console.log('expand()')
+        const contentHeight = document.getElementById('result-expandable-content').offsetHeight 
+        this.expandFunction(contentHeight+30)
+        this.setState({ active: true })
+    }
+
+    componentDidMount = () => {
+        window.addEventListener('resize', this.windowListener)
         this.calculateHeightDifference()
     }
 
-    componentDidUpdate() {
+    componentWillUnmount = () => {
+        window.removeEventListener('resize', this.windowListener)
+        clearTimeout(this.windowResizeTimeout)
+    }
+
+    componentWillReceiveProps = async () => {
+        await this.setState({ 
+            needed: false, 
+            active: false,
+            collapsedHeight: this.props.collapsedHeight
+        })
+        this.calculateHeightDifference()
+    }
+
+    componentDidUpdate = () => {
         if (!this.checked) {
             this.calculateHeightDifference()
         } else {
@@ -49,17 +70,11 @@ class ExpandableArea extends React.Component {
         }
     }
 
-    expand = () => {
-        const contentHeight = document.getElementById('result-expandable-content').offsetHeight 
-        this.expandFunction(contentHeight+30)
-        this.setState({ active: true })
-    }
-
-    render() {
-        const { collapsedHeight } = this.state
+    render = () => {
+        const { collapsedHeight, active } = this.state
         const { children } = this.props
         let Container
-        if (this.state.active) {
+        if (active) {
             Container = styled.div`
                 position: relative;
             `
@@ -94,15 +109,14 @@ class ExpandableArea extends React.Component {
                 }
             }
         `
-        const Content = styled.div`
-            
-        `
+        const Content = styled.div``
+
         return (
             <Container id='result-expandable-container'>
                 <Content id='result-expandable-content'>
                     {children}
                 </Content>
-                {(this.state.needed)?<Tab><span tabIndex='0' onClick={this.expand}>View More</span></Tab>:null}
+                {(this.state.needed && !active)?<Tab><span tabIndex='0' onClick={this.expand}>View More</span></Tab>:null}
             </Container>
         )
     }

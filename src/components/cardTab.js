@@ -4,7 +4,6 @@ import styled from 'styled-components'
 const Container = styled.div`
     display: inline-block;
     position: relative;
-    min-width: 50px;
     margin: 15px 2px 2px 2px;
 
     & ul li {
@@ -16,11 +15,13 @@ const Container = styled.div`
         line-height: 12px;
         color: #a6a6a6;
         background: #f2f2f2;
+        min-width: 45px;
+        text-align: center;
     }
 `
 const TabTitle = styled.div`
     position: absolute;
-    left: 2px;
+    left: 3px;
     top: -10px;
     height: 10px;
     font-size: 10px;

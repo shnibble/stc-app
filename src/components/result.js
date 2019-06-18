@@ -77,7 +77,17 @@ class Result extends React.Component {
         this.state = this.props.data
     }
 
-    componentWillReceiveProps = async (nextProps) => {
+    expandCard = (newHeight) => {
+        const el = document.getElementById('card')
+        el.style.height = newHeight + 'px'
+    }
+
+    collapseCard = () => {
+        const el = document.getElementById('card')
+        el.style.removeProperty('height')
+    }
+
+    componentWillReceiveProps = (nextProps) => {
         this.setState({
             screenStyle: nextProps.data.screenStyle,
             error: nextProps.data.error,
@@ -94,12 +104,7 @@ class Result extends React.Component {
         }        
     }
 
-    expandArea = (newHeight) => {
-        const el = document.getElementById('card')
-        el.style.height = newHeight + 'px'
-    }
-
-    render() {
+    render = () => {
         const { screenStyle, error, loading, meal } = this.state
         const categories = (meal.categories[0] !== null)?meal.categories.map((category) => category ):[]
         const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
@@ -117,7 +122,7 @@ class Result extends React.Component {
                     {(meal.name)
                         ?<Card id='card'>
                             <CardSectionLeft>
-                                <ExpandableArea collapsedHeight={210} expandFunction={this.expandArea}>
+                                <ExpandableArea collapsedHeight={210} expandFunction={this.expandCard} collapseFunction={this.collapseCard}>
                                     <CardTitle>{meal.name}</CardTitle>
                                     <TabsContainer>
                                         <CardTab title='Categories' items={categories} />

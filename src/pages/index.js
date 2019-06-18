@@ -56,6 +56,7 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = initialState
+        this.windowResizeTimeout = false
     }
 
     saveStateToLocalStorage = () => {
@@ -86,6 +87,11 @@ class Index extends React.Component {
         }
     }
 
+    windowListener = () => {
+        clearTimeout(this.windowResizeTimeout)
+        this.windowResizeTimeout = setTimeout(this.processScreenSize, 250)
+    }
+
     processScreenSize = () => {
         if (window.innerWidth <= global.screenSizes.mobile) {
             if (this.state.screenStyle !== 'mobile') {
@@ -101,7 +107,7 @@ class Index extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate = (nextProps, nextState) => {
         if  (
                 nextState.screenStyle !== this.state.screenStyle ||
                 nextState.loading !== this.state.loading ||
@@ -111,14 +117,6 @@ class Index extends React.Component {
             } else {
                 return false
         }
-    }
-
-    componentWillMount() {
-        this.pullStateFromLocalStorage()
-
-        // window resizing
-        window.addEventListener('resize', this.processScreenSize)
-        this.processScreenSize()
     }
 
     toggleFilteredCategory = async (ev) => {
@@ -201,8 +199,23 @@ class Index extends React.Component {
                 })
             })
     }
+
+    componentWillMount = () => {
+        this.pullStateFromLocalStorage()
+    }
+
+    componentDidMount = () => {
+        // window resizing
+        window.addEventListener('resize', this.windowListener)
+        this.processScreenSize()
+    }
+
+    componentWillUnmount = () => {
+        window.removeEventListener('resize', this.windowListener)
+        clearTimeout(this.windowResizeTimeout)
+    }
     
-    render() {
+    render = () => {
         const { screenStyle, filteredCategories, filteredOrigins } = this.state
         return (
             <Wrapper>
