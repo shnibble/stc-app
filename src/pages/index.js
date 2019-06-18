@@ -44,7 +44,11 @@ const initialState = {
     error: false,
     meal: {
         name: '',
-        description: ''
+        description: '',
+        image: '',
+        categories: [],
+        origins: [],
+        tags: []
     }
 }
 
@@ -176,17 +180,17 @@ class Index extends React.Component {
         axios
             .get(`http://localhost:3000/meals${queryString}`)
             .then(meal => {
-                const { name, description, categories, origins, tags, variations } = meal.data[0]
+                const { name, description, image, categories, origins, tags } = meal.data[0]
                 this.setState({  
                     loading: false,
                     error: false,
                     meal: {
                         name: name,
                         description: description,
+                        image: image,
                         categories: categories,
                         origins: origins,
-                        tags: tags,
-                        variations: variations
+                        tags: tags
                     }
                 })
             })

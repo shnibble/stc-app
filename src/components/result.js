@@ -1,15 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { scrollMainToTop } from '../functions'
+import CardTab from '../components/cardTab'
+import ExpandableArea from '../components/expandableArea'
 
 const Container = styled.div`
     position: relative;
-    background: #f2f2f2;
     padding: 15px;
     min-height: 70px;
     overflow: hidden;
     box-sizing: border-box; 
-    box-shadow: 0 0 3px 1px rgba(0,0,0,0.2);
     transition: height .25s;
 `
 const Alert = styled.div`
@@ -25,43 +25,85 @@ const Alert = styled.div`
     background: rgba(255,255,255,0.95);
     font-size: 20px;
     line-height: 20px;
+    z-index: 1;
+`
+const Card = styled.div`
+    display: flex;
+    flex-direction: row;
+    height: 240px;
+    box-shadow: 0 0 3px 1px rgba(0,0,0,0.2);
+    transition: height .25s;
+`
+const CardSectionLeft = styled.div`
+    flex: 1;
+    padding: 10px;
+    overflow-y: hidden;
+`
+const CardSectionRight = styled.div`
+    width: 210px;
+    padding: 10px;
+    overflow-y: hidden;
+`
+const CardTitle = styled.h3`
+    text-align: left;
+    font-size: 38px;
+    font-weight: normal;
+    font-family: 'Quicksand', sans-serif;
+`
+const TabsContainer = styled.div`
+    text-align: left;
+`
+
+const CardDescription = styled.p`
+    text-align: left;
+    font-family: 'Quicksand', sans-serif;
+    padding: 5px;
+`
+const CardImage = styled.div`
+    position: relative;
+    height: 210px;
+    width: 210px;
+    margin: auto;
+
+    & > img {
+        width: 100%;
+    }
+    
 `
 
 class Result extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            screenStyle: this.props.data.screenStyle,
-            error: this.props.data.error || false,
-            loading: this.props.data.loading || false,
-            meal: this.props.data.meal || null
-        }
+        this.state = this.props.data
     }
 
     componentWillReceiveProps = async (nextProps) => {
-        const el = document.getElementById('result-container')
-        el.style.removeProperty('height')
-        const elStyle = window.getComputedStyle(el, null)
-        const oldHeight = elStyle.getPropertyValue('height')
-
-        await this.setState({
+        this.setState({
+            screenStyle: nextProps.data.screenStyle,
             error: nextProps.data.error,
             loading: nextProps.data.loading,
             meal: nextProps.data.meal
         })
-        const newHeight = elStyle.getPropertyValue('height')
-        el.style.height = oldHeight
-        setTimeout(() => {
-            el.style.height = newHeight
-        }, 1)
+        const el = document.getElementById('card')
+        if (el !== null) {
+            el.style.removeProperty('height')
+        }
 
         if (this.state.screenStyle !== 'desktop') {
             scrollMainToTop()
         }        
     }
 
+    expandArea = (newHeight) => {
+        const el = document.getElementById('card')
+        el.style.height = newHeight + 'px'
+    }
+
     render() {
-        const { error, loading, meal } = this.state
+        const { screenStyle, error, loading, meal } = this.state
+        const categories = (meal.categories[0] !== null)?meal.categories.map((category) => category ):[]
+        const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
+        const tags = (meal.tags[0] !== null)?meal.tags.map((tag) => tag ):[]
         return(
             <Container id='result-container'>
                 {
@@ -73,15 +115,26 @@ class Result extends React.Component {
                         ?<Alert><p>Loading Meal...</p></Alert>
                         :null}
                     {(meal.name)
-                        ?<div>
-                            <h3>{meal.name}</h3>
-                            <p>{meal.description}</p>
-                            <hr/>
-                            <p><strong>Categories:</strong> {meal.categories.join(', ')}</p>
-                            <p><strong>Origins:</strong> {meal.origins.join(', ')}</p>
-                            {(meal.tags[0] !== null)?<p><strong>Tags:</strong> {meal.tags.join(', ')}</p>:null}
-                            {(meal.variations[0] !== null)?<p><strong>Variations:</strong> {meal.variations.join(', ')}</p>:null}
-                        </div>
+                        ?<Card id='card'>
+                            <CardSectionLeft>
+                                <ExpandableArea collapsedHeight={210} expandFunction={this.expandArea}>
+                                    <CardTitle>{meal.name}</CardTitle>
+                                    <TabsContainer>
+                                        <CardTab title='Categories' items={categories} />
+                                        <CardTab title='Origins' items={origins} />
+                                        <CardTab title='Tags' items={tags} />
+                                    </TabsContainer>
+                                    <CardDescription>{meal.description}</CardDescription>
+                                </ExpandableArea>
+                            </CardSectionLeft>
+                            {(screenStyle !== 'mobile' && meal.image !== null)
+                            ?<CardSectionRight>
+                                <CardImage>
+                                    <img src={meal.image} alt={meal.name} />
+                                </CardImage>                                        
+                            </CardSectionRight>
+                            :null}
+                        </Card>
                         :(!error)
                             ?<Alert>
                                 <h3>Click the "GET MEAL" button to find a meal.</h3>
