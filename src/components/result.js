@@ -91,6 +91,7 @@ class Result extends React.Component {
         this.setState({
             screenStyle: nextProps.data.screenStyle,
             error: nextProps.data.error,
+            errorMessage: nextProps.data.errorMessage,
             loading: nextProps.data.loading,
             meal: nextProps.data.meal
         })
@@ -105,22 +106,21 @@ class Result extends React.Component {
     }
 
     render = () => {
-        const { screenStyle, error, loading, meal } = this.state
+        const { screenStyle, error, errorMessage, loading, meal } = this.state
         const categories = (meal.categories[0] !== null)?meal.categories.map((category) => category ):[]
         const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
         const tags = (meal.tags[0] !== null)?meal.tags.map((tag) => tag ):[]
-        return(
-            <Container id='result-container'>
-                {
-                    <>
-                    {(error)
-                        ?<Alert><p style={{color: 'red'}}>Error fetching meals. Try searching for something less specific.</p></Alert>
-                        :null}
-                    {(loading)
-                        ?<Alert><p>Loading Meal...</p></Alert>
-                        :null}
-                    {(meal.name)
-                        ?<Card id='card'>
+
+        let content = null
+        if (error) {
+            // 1. check for error
+            content =   <Alert><p style={{color: 'red'}}>{errorMessage}</p></Alert>
+        } else if (loading) {
+            // 2. check if loading
+            content =   <Alert><p>Looking up meals...</p></Alert>
+        } else if (meal.name) {
+            // 3. check for result
+            content =   <Card id='card'>
                             <CardSectionLeft>
                                 <ExpandableArea collapsedHeight={210} expandFunction={this.expandCard} collapseFunction={this.collapseCard}>
                                     <CardTitle>{meal.name}</CardTitle>
@@ -139,14 +139,15 @@ class Result extends React.Component {
                                 </CardImage>                                        
                             </CardSectionRight>
                             :null}
-                        </Card>
-                        :(!error)
-                            ?<Alert>
-                                <h3>Click the "GET MEAL" button to find a meal.</h3>
-                            </Alert>
-                        :null}
-                    </>
-                }
+                        </Card>        
+        } else {
+            // 4. display prompt
+            content =   <Alert><h3>Click the "GET MEAL" button to find a meal.</h3></Alert>        
+        }
+
+        return(
+            <Container id='result-container'>
+                {content}
             </Container>
         )
     }

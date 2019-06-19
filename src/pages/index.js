@@ -42,6 +42,7 @@ const initialState = {
     filteredOrigins: [],
     loading: false,
     error: false,
+    errorMessage: '',
     meal: {
         name: '',
         description: '',
@@ -177,25 +178,54 @@ class Index extends React.Component {
 
         axios
             .get(`http://localhost:3000/meals${queryString}`)
-            .then(meal => {
-                const { name, description, image, categories, origins, tags } = meal.data[0]
-                this.setState({  
-                    loading: false,
-                    error: false,
-                    meal: {
-                        name: name,
-                        description: description,
-                        image: image,
-                        categories: categories,
-                        origins: origins,
-                        tags: tags
-                    }
-                })
+            .then(result => {
+                // the first element of result.data array will be meta data, subsequent elements are potentially results
+                const { error, errorMessage, resultsFound } = result.data[0]
+
+                if (error) {
+                    // the server responded but returned an error
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: errorMessage,
+                    })
+                } else if (resultsFound === 0) {
+                    // the server responded with zero results from the query
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: 'No results found using those parameters. Try searching for something less specific.',
+                    })
+                } else if (resultsFound > 1) {
+                    // the server responded with more than one result from the query
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: 'The API server returned multiple results. Try searching for something else.',
+                    })
+                } else {
+                    // good response
+                    const { name, description, image, categories, origins, tags } = result.data[1]
+                    this.setState({  
+                        loading: false,
+                        error: false,
+                        meal: {
+                            name: name,
+                            description: description,
+                            image: image,
+                            categories: categories,
+                            origins: origins,
+                            tags: tags
+                        }
+                    })
+                }
+                
             })
             .catch(err => {
                 this.setState({ 
                     loading: false,
-                    error: true 
+                    error: true,
+                    errorMessage: 'The API server returned an error or could not be reached. Try your search again in a moment.'
                 })
             })
     }
