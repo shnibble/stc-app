@@ -3,11 +3,12 @@ import styled from 'styled-components'
 import { scrollMainToTop } from '../functions'
 import CardTab from '../components/cardTab'
 import ExpandableArea from '../components/expandableArea'
+import LoadingAnimation from '../components/loadingAnimation'
 
 const Container = styled.div`
     position: relative;
     padding: 15px;
-    min-height: 70px;
+    min-height: 100px;
     overflow: hidden;
     box-sizing: border-box; 
     transition: height .25s;
@@ -117,7 +118,7 @@ class Result extends React.Component {
             content =   <Alert><p style={{color: 'red'}}>{errorMessage}</p></Alert>
         } else if (loading) {
             // 2. check if loading
-            content =   <Alert><p>Looking up meals...</p></Alert>
+            content =   <LoadingAnimation />
         } else if (meal.name) {
             // 3. check for result
             content =   <Card id='card'>
