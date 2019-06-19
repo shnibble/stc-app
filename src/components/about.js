@@ -33,6 +33,7 @@ const Container = styled.div`
     box-shadow: 2px 3px 4px 1px rgba(0,0,0,0.2);
     transition: height .25s, padding .25s, box-shadow .25s;
     opacity: 0;
+    z-index: 2;
 
     &.active {
         display: block;
@@ -106,7 +107,7 @@ class AboutModule extends React.Component {
         this.setState({ active: !this.state.active })
     }
 
-    render() {
+    render = () => {
         return (
             <>
                 <Button onClick={this.toggleContainer}>About
