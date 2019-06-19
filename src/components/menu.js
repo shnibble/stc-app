@@ -47,6 +47,7 @@ const Container = styled.div`
     border: 2px solid ${global.colors.blue};
     background-color: rgba(255,255,255,0.95);
     transition: left .25s ease-out;
+    z-index: 2;
 
     &.active {
         left: 0;

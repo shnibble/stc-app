@@ -8,21 +8,33 @@ import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
 import CategoryFilter from '../components/categoryFilter'
 import OriginFilter from '../components/originFilter'
+import Result from '../components/result'
 
 const Wrapper = styled.div`
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: flex;
-    min-height: 100vh;
     flex-direction: column;
     align-items: stretch;
 `
 const Main = styled.main`
+    height: 0px;
     flex-grow: 1;
     flex-shrink: 0;
     margin: 0 auto;
     padding: 5px;
     width: 100%;
     box-sizing: border-box; 
-    max-width: 1025px;
+    overflow-y: auto;
+    text-align: center;
+
+    & > div, & > button {
+        max-width: 1025px;
+        margin: 10px auto;
+    }
 `
 const initialState = {
     screenStyle: 'mobile',
@@ -30,10 +42,14 @@ const initialState = {
     filteredOrigins: [],
     loading: false,
     error: false,
-    loaded: false,
+    errorMessage: '',
     meal: {
         name: '',
-        description: ''
+        description: '',
+        image: '',
+        categories: [],
+        origins: [],
+        tags: []
     }
 }
 
@@ -41,6 +57,7 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = initialState
+        this.windowResizeTimeout = false
     }
 
     saveStateToLocalStorage = () => {
@@ -71,6 +88,11 @@ class Index extends React.Component {
         }
     }
 
+    windowListener = () => {
+        clearTimeout(this.windowResizeTimeout)
+        this.windowResizeTimeout = setTimeout(this.processScreenSize, 250)
+    }
+
     processScreenSize = () => {
         if (window.innerWidth <= global.screenSizes.mobile) {
             if (this.state.screenStyle !== 'mobile') {
@@ -86,25 +108,16 @@ class Index extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate = (nextProps, nextState) => {
         if  (
                 nextState.screenStyle !== this.state.screenStyle ||
                 nextState.loading !== this.state.loading ||
-                nextState.error !== this.state.error ||
-                nextState.loaded !== this.state.loaded
+                nextState.error !== this.state.error 
             ) {
                 return true
             } else {
                 return false
         }
-    }
-
-    componentWillMount() {
-        this.pullStateFromLocalStorage()
-
-        // window resizing
-        window.addEventListener('resize', this.processScreenSize)
-        this.processScreenSize()
     }
 
     toggleFilteredCategory = async (ev) => {
@@ -138,7 +151,7 @@ class Index extends React.Component {
     }
 
     fetchMeal = () => {
-        this.setState({ loading: true })
+        this.setState({ loading: true, error: false })
         
         // build query string
         let firstParam = true
@@ -165,58 +178,86 @@ class Index extends React.Component {
 
         axios
             .get(`http://localhost:3000/meals${queryString}`)
-            .then(meal => {
-                const mealName = meal.data[0].name
-                const mealDescription = meal.data[0].description
-                this.setState({  
-                    loading: false,
-                    error: false,
-                    loaded: true, 
-                    meal: {
-                        name: mealName,
-                        description: mealDescription
-                    }
-                })
+            .then(result => {
+                // the first element of result.data array will be meta data, subsequent elements are potentially results
+                const { error, errorMessage, resultsFound } = result.data[0]
+
+                if (error) {
+                    // the server responded but returned an error
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: errorMessage,
+                    })
+                } else if (resultsFound === 0) {
+                    // the server responded with zero results from the query
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: 'No results found using those parameters. Try searching for something less specific.',
+                    })
+                } else if (resultsFound > 1) {
+                    // the server responded with more than one result from the query
+                    this.setState({
+                        loading: false,
+                        error: true,
+                        errorMessage: 'The API server returned multiple results. Try searching for something else.',
+                    })
+                } else {
+                    // good response
+                    const { name, description, image, categories, origins, tags } = result.data[1]
+                    this.setState({  
+                        loading: false,
+                        error: false,
+                        meal: {
+                            name: name,
+                            description: description,
+                            image: image,
+                            categories: categories,
+                            origins: origins,
+                            tags: tags
+                        }
+                    })
+                }
+                
             })
             .catch(err => {
                 this.setState({ 
-                    loading: false, 
-                    loaded: false, 
-                    error: true 
+                    loading: false,
+                    error: true,
+                    errorMessage: 'The API server returned an error or could not be reached. Try your search again in a moment.'
                 })
             })
     }
+
+    componentWillMount = () => {
+        this.pullStateFromLocalStorage()
+    }
+
+    componentDidMount = () => {
+        // window resizing
+        window.addEventListener('resize', this.windowListener)
+        this.processScreenSize()
+    }
+
+    componentWillUnmount = () => {
+        window.removeEventListener('resize', this.windowListener)
+        clearTimeout(this.windowResizeTimeout)
+    }
     
-    render() {
-        const { screenStyle } = this.state
+    render = () => {
+        const { screenStyle, filteredCategories, filteredOrigins } = this.state
         return (
             <Wrapper>
-                <Header screenStyle={this.state.screenStyle} getMealFunction={this.fetchMeal}/>
-                <Main>                    
+                <Header screenStyle={screenStyle} getMealFunction={this.fetchMeal}/>
+                <Main>       
+                    { (screenStyle === 'mobile' || screenStyle === 'tablet')?<Result data={this.state} />:null } 
                     <div id="filters">
-                        <CategoryFilter screenStyle={this.state.screenStyle} filter={this.state.filteredCategories} onClickFunction={this.toggleFilteredCategory} />
-                        <OriginFilter screenStyle={this.state.screenStyle} filter={this.state.filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                        <CategoryFilter screenStyle={screenStyle} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
+                        <OriginFilter screenStyle={screenStyle} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
                     </div>
                     { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
-                    <div id="results">
-                        {
-                            this.state.loading
-                            ?
-                            <p>Loading Meal...</p> 
-                            : this.state.error
-                                ?
-                                <p>Could not load a meal with those parameters. Try something less specific.</p>
-                                : this.state.loaded 
-                                    ?
-                                    <>
-                                        <h3>Result</h3> 
-                                        <p>Name: {this.state.meal.name}</p>
-                                        <p>Description: {this.state.meal.description}</p>
-                                    </>
-                                    :
-                                    null
-                        }                        
-                    </div>
+                    { (screenStyle === 'desktop')?<Result data={this.state} />:null } 
                 </Main>
                 { (screenStyle === 'desktop')?<Footer />:null }
             </Wrapper>
