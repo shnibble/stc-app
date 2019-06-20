@@ -27,6 +27,14 @@ module.exports = {
         name: 'origins',
         method: 'get',
       }
+    },
+    {
+      resolve: 'gatsby-source-apiserver',
+      options: {
+        url: 'http://localhost:3000/meta/tags',
+        name: 'tags',
+        method: 'get',
+      }
     }
   ],
 }

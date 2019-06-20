@@ -75,7 +75,13 @@ const CardImage = styled.div`
 class Result extends React.Component {
     constructor(props) {
         super(props)
-        this.state = this.props.data
+        this.state = {
+            screenStyle: props.screenStyle,
+            error: props.error,
+            errorMessage: props.errorMessage,
+            loading: props.loading,
+            meal: props.meal
+        }
     }
 
     expandCard = (newHeight) => {
@@ -88,22 +94,30 @@ class Result extends React.Component {
         el.style.removeProperty('height')
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        this.setState({
-            screenStyle: nextProps.data.screenStyle,
-            error: nextProps.data.error,
-            errorMessage: nextProps.data.errorMessage,
-            loading: nextProps.data.loading,
-            meal: nextProps.data.meal
-        })
-        const el = document.getElementById('card')
-        if (el !== null) {
-            el.style.removeProperty('height')
-        }
+    componentWillReceiveProps = (nextProps) => {       
+        if  (
+            nextProps.screenStyle !== this.state.screenStyle ||
+            nextProps.loading !== this.state.loading ||
+            nextProps.error !== this.state.error ||
+            nextProps.errorMessage !== this.state.errorMessage ||
+            nextProps.meal !== this.state.meal
+        ) {
+            this.setState({
+                screenStyle: nextProps.screenStyle,
+                error: nextProps.error,
+                errorMessage: nextProps.errorMessage,
+                loading: nextProps.loading,
+                meal: nextProps.meal
+            })
+            const el = document.getElementById('card')
+            if (el !== null) {
+                el.style.removeProperty('height')
+            }
 
-        if (this.state.screenStyle !== 'desktop') {
-            scrollMainToTop()
-        }        
+            if (this.state.screenStyle !== 'desktop') {
+                scrollMainToTop()
+            }
+        }  
     }
 
     render = () => {
@@ -146,7 +160,7 @@ class Result extends React.Component {
             content =   <Alert><h3>Click the "GET MEAL" button to find a meal.</h3></Alert>        
         }
 
-        return(
+        return (
             <Container id='result-container'>
                 {content}
             </Container>

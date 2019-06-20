@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import globals from '../variables.global'
+import global from '../variables.global'
 
 const Container = styled.div`
     position: absolute;
@@ -35,7 +35,7 @@ const Loading = styled.div`
         width: 4px;
         height: 8px;
         border-radius: 2px;
-        background-color: ${globals.colors.orange};
+        background-color: ${global.colors.orange};
     }
 
     > div:nth-child(1) {

@@ -8,6 +8,7 @@ import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
 import CategoryFilter from '../components/categoryFilter'
 import OriginFilter from '../components/originFilter'
+import TagFilter from '../components/tagFilter'
 import Result from '../components/result'
 
 const Wrapper = styled.div`
@@ -40,6 +41,7 @@ const initialState = {
     screenStyle: 'mobile',
     filteredCategories: [],
     filteredOrigins: [],
+    filteredTags: [],
     loading: false,
     error: false,
     errorMessage: '',
@@ -63,8 +65,10 @@ class Index extends React.Component {
     saveStateToLocalStorage = () => {
         const array_1 = [...this.state.filteredCategories]
         const array_2 = [...this.state.filteredOrigins]
+        const array_3 = [...this.state.filteredTags]
         localStorage.setItem('filteredCategories', JSON.stringify(array_1))
         localStorage.setItem('filteredOrigins', JSON.stringify(array_2))
+        localStorage.setItem('filteredTags', JSON.stringify(array_3))
     }
 
     pullStateFromLocalStorage = () => {
@@ -84,6 +88,15 @@ class Index extends React.Component {
                 this.setState({ filteredOrigins: value })
             } catch(e) {
                 this.SetState({ filteredOrigins: value })
+            }
+        }
+        if (localStorage.hasOwnProperty('filteredTags')) {
+            let value = localStorage.getItem('filteredTags')
+            try {
+                value = JSON.parse(value)
+                this.setState({ filteredTags: value })
+            } catch(e) {
+                this.SetState({ filteredTags: value })
             }
         }
     }
@@ -112,7 +125,8 @@ class Index extends React.Component {
         if  (
                 nextState.screenStyle !== this.state.screenStyle ||
                 nextState.loading !== this.state.loading ||
-                nextState.error !== this.state.error 
+                nextState.error !== this.state.error ||
+                nextState.filteredTags !== this.state.filteredTags
             ) {
                 return true
             } else {
@@ -150,6 +164,21 @@ class Index extends React.Component {
         this.saveStateToLocalStorage()
     }
 
+    toggleFilteredTag= async (ev) => {
+        const name = ev.target.value
+        const tempArray = this.state.filteredTags.slice()
+        const activeIndex = tempArray.indexOf(name)
+        if (activeIndex !== -1) {
+            tempArray.splice(activeIndex, 1)
+        } else {
+            tempArray.push(name)
+        }
+        await this.setState({
+            filteredTags: tempArray
+        })
+        this.saveStateToLocalStorage()
+    }
+
     fetchMeal = () => {
         this.setState({ loading: true, error: false })
         
@@ -173,8 +202,17 @@ class Index extends React.Component {
             }
             
         }).join('')
+        const queryStringTags = this.state.filteredTags.map((tag) => {
+            if (firstParam) {
+                firstParam = false
+                return `?tags[]=${tag}`
+            } else {
+                return `&tags[]=${tag}`
+            }
+            
+        }).join('')
         const queryStringDetails = (firstParam)?`?limit=1&order=RANDOM`:`&limit=1&order=RANDOM`
-        const queryString = `${queryStringCategories}${queryStringOrigins}${queryStringDetails}`
+        const queryString = `${queryStringCategories}${queryStringOrigins}${queryStringTags}${queryStringDetails}`
 
         axios
             .get(`http://localhost:3000/meals${queryString}`)
@@ -246,18 +284,19 @@ class Index extends React.Component {
     }
     
     render = () => {
-        const { screenStyle, filteredCategories, filteredOrigins } = this.state
+        const { screenStyle, loading, error, errorMessage, filteredCategories, filteredOrigins, filteredTags, meal } = this.state
         return (
             <Wrapper>
                 <Header screenStyle={screenStyle} getMealFunction={this.fetchMeal}/>
                 <Main>       
-                    { (screenStyle === 'mobile' || screenStyle === 'tablet')?<Result data={this.state} />:null } 
+                    { (screenStyle === 'mobile' || screenStyle === 'tablet')?<Result screenStyle={screenStyle} error={error} errorMessage={errorMessage} loading={loading} meal={meal} />:null } 
                     <div id="filters">
                         <CategoryFilter screenStyle={screenStyle} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
                         <OriginFilter screenStyle={screenStyle} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                        <TagFilter screenStyle={screenStyle} filter={filteredTags} onClickFunction={this.toggleFilteredTag} />                        
                     </div>
                     { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
-                    { (screenStyle === 'desktop')?<Result data={this.state} />:null } 
+                    { (screenStyle === 'desktop')?<Result screenStyle={screenStyle} error={error} errorMessage={errorMessage} loading={loading} meal={meal} />:null } 
                 </Main>
                 { (screenStyle === 'desktop')?<Footer />:null }
             </Wrapper>
