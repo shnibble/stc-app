@@ -164,7 +164,7 @@ class Index extends React.Component {
         this.saveStateToLocalStorage()
     }
 
-    toggleFilteredTag= async (ev) => {
+    toggleFilteredTag = async (ev) => {
         const name = ev.target.value
         const tempArray = this.state.filteredTags.slice()
         const activeIndex = tempArray.indexOf(name)
