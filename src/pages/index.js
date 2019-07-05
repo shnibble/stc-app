@@ -10,6 +10,7 @@ import CategoryFilter from '../components/categoryFilter'
 import OriginFilter from '../components/originFilter'
 import TagFilter from '../components/tagFilter'
 import Result from '../components/result'
+import LoadingAnimation from '../components/loadingAnimation';
 
 const Wrapper = styled.div`
     position: fixed;
@@ -39,12 +40,18 @@ const Main = styled.main`
 `
 const initialState = {
     screenStyle: 'mobile',
+    allCategories: [],
+    allOrigins: [],
+    allTags: [],
+    loadingMeta: false,
+    metaError: false,
+    metaErrorMessage: '',
     filteredCategories: [],
     filteredOrigins: [],
     filteredTags: [],
-    loading: false,
-    error: false,
-    errorMessage: '',
+    loadingResult: false,
+    resultError: false,
+    resultErrorMessage: '',
     meal: {
         name: '',
         description: '',
@@ -121,11 +128,67 @@ class Index extends React.Component {
         }
     }
 
+    loadMetaData = async () => {
+        this.setState({ loadingMeta: true })
+        let categories = false
+        let origins = false
+        let tags = false
+        
+        await axios
+            .get(`https://api.somethingtocook.com/meta/categories`)
+            .then(result => categories = result.data)
+            .catch(err => {
+                this.setState({
+                    loadingMeta: false,          
+                    metaError: true,
+                    metaErrorMessage: 'Failed to load categories from the API.',
+                })
+                return false
+            })
+        await axios
+            .get(`https://api.somethingtocook.com/meta/origins`)
+            .then(result => origins = result.data)
+            .catch(err => {
+                this.setState({
+                    loadingMeta: false,
+                    metaError: true,
+                    metaErrorMessage: 'Failed to load origins from the API.',
+                })
+                return false
+            })
+        await axios
+            .get(`https://api.somethingtocook.com/meta/tags`)
+            .then(result => tags = result.data)
+            .catch(err => {
+                this.setState({
+                    loadingMeta: false,
+                    metaError: true,
+                    metaErrorMessage: 'Failed to load tags from the API.',
+                })
+                return false
+            })
+
+        if (categories.length > 0 && origins.length > 0 && tags.length > 0) {
+            await this.setState({
+                loadingMeta: false,
+                metaError: false,
+                allCategories: categories,
+                allOrigins: origins,
+                allTags: tags
+            })
+            return true
+        }
+        
+    }
+
     shouldComponentUpdate = (nextProps, nextState) => {
         if  (
                 nextState.screenStyle !== this.state.screenStyle ||
-                nextState.loading !== this.state.loading ||
-                nextState.error !== this.state.error ||
+                nextState.loadingMeta !== this.state.loadingMeta ||
+                nextState.metaError !== this.state.metaError ||
+                nextState.loadingResult !== this.state.loadingResult ||
+                nextState.resultError !== this.state.resultError ||
+                nextState.allTags !== this.state.allTags ||
                 nextState.filteredTags !== this.state.filteredTags
             ) {
                 return true
@@ -180,7 +243,7 @@ class Index extends React.Component {
     }
 
     fetchMeal = () => {
-        this.setState({ loading: true, error: false })
+        this.setState({ loadingResult: true, resultError: false })
         
         // build query string
         let firstParam = true
@@ -215,7 +278,7 @@ class Index extends React.Component {
         const queryString = `${queryStringCategories}${queryStringOrigins}${queryStringTags}${queryStringDetails}`
 
         axios
-            .get(`http://localhost:3000/meals${queryString}`)
+            .get(`https://api.somethingtocook.com/meals${queryString}`)
             .then(result => {
                 // the first element of result.data array will be meta data, subsequent elements are potentially results
                 const { error, errorMessage, resultsFound } = result.data[0]
@@ -223,30 +286,30 @@ class Index extends React.Component {
                 if (error) {
                     // the server responded but returned an error
                     this.setState({
-                        loading: false,
-                        error: true,
-                        errorMessage: errorMessage,
+                        loadingResult: false,
+                        resultError: true,
+                        resultErrorMessage: errorMessage,
                     })
                 } else if (resultsFound === 0) {
                     // the server responded with zero results from the query
                     this.setState({
-                        loading: false,
-                        error: true,
-                        errorMessage: 'No results found using those parameters. Try searching for something less specific.',
+                        loadingResult: false,
+                        resultError: true,
+                        resultErrorMessage: 'No results found using those parameters. Try searching for something less specific.',
                     })
                 } else if (resultsFound > 1) {
                     // the server responded with more than one result from the query
                     this.setState({
-                        loading: false,
-                        error: true,
-                        errorMessage: 'The API server returned multiple results. Try searching for something else.',
+                        loadingResult: false,
+                        resultError: true,
+                        resultErrorMessage: 'The API server returned multiple results. Try searching for something else.',
                     })
                 } else {
                     // good response
                     const { name, description, image, categories, origins, tags } = result.data[1]
                     this.setState({  
-                        loading: false,
-                        error: false,
+                        loadingResult: false,
+                        resultError: false,
                         meal: {
                             name: name,
                             description: description,
@@ -261,15 +324,16 @@ class Index extends React.Component {
             })
             .catch(err => {
                 this.setState({ 
-                    loading: false,
-                    error: true,
-                    errorMessage: 'The API server returned an error or could not be reached. Try your search again in a moment.'
+                    loadingResult: false,
+                    resultError: true,
+                    resultErrorMessage: 'The API server returned an error or could not be reached. Try your search again in a moment.'
                 })
             })
     }
 
-    componentWillMount = () => {
+    componentWillMount = async () => {
         this.pullStateFromLocalStorage()
+        await this.loadMetaData()
     }
 
     componentDidMount = () => {
@@ -284,21 +348,43 @@ class Index extends React.Component {
     }
     
     render = () => {
-        const { screenStyle, loading, error, errorMessage, filteredCategories, filteredOrigins, filteredTags, meal } = this.state
+        const { screenStyle, loadingMeta, metaError, loadingResult, resultError, resultErrorMessage, allCategories, allOrigins, allTags, filteredCategories, filteredOrigins, filteredTags, meal } = this.state
         return (
             <Wrapper>
-                <Header screenStyle={screenStyle} getMealFunction={this.fetchMeal}/>
-                <Main>       
-                    { (screenStyle === 'mobile' || screenStyle === 'tablet')?<Result screenStyle={screenStyle} error={error} errorMessage={errorMessage} loading={loading} meal={meal} />:null } 
-                    <div id="filters">
-                        <CategoryFilter screenStyle={screenStyle} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
-                        <OriginFilter screenStyle={screenStyle} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
-                        <TagFilter screenStyle={screenStyle} filter={filteredTags} onClickFunction={this.toggleFilteredTag} />                        
-                    </div>
-                    { (screenStyle === 'desktop')?<GetMealButton getMealFunction={this.fetchMeal} />:null }
-                    { (screenStyle === 'desktop')?<Result screenStyle={screenStyle} error={error} errorMessage={errorMessage} loading={loading} meal={meal} />:null } 
+                <Header screenStyle={screenStyle} loading={loadingMeta} error={metaError} getMealFunction={this.fetchMeal}/>
+                <Main>
+                    {(loadingMeta)
+                       ?<LoadingAnimation />
+                       :(metaError)
+                           ?<div>
+                               <h3>Could Not Load Meta Data</h3>
+                               <p>Something went wrong while attempting to load meta data from the API server. Either it is offline or we broke something on our end. Please refresh the page in a moment.</p>
+                            </div>
+                           :<>
+                                {(screenStyle === 'mobile' || screenStyle === 'tablet')
+                                    ?<Result screenStyle={screenStyle} error={resultError} errorMessage={resultErrorMessage} loading={loadingResult} meal={meal} />
+                                    :null
+                                }
+                                <div id="filters">
+                                    <CategoryFilter screenStyle={screenStyle} allCategories={allCategories} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
+                                    <OriginFilter screenStyle={screenStyle} allOrigins={allOrigins} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                                    <TagFilter screenStyle={screenStyle} allTags={allTags} filter={filteredTags} onClickFunction={this.toggleFilteredTag} />                 
+                                </div>
+                                {(screenStyle === 'desktop')
+                                    ?<GetMealButton getMealFunction={this.fetchMeal} />
+                                    :null
+                                }
+                                {(screenStyle === 'desktop')
+                                    ?<Result screenStyle={screenStyle} error={resultError} errorMessage={resultErrorMessage} loading={loadingResult} meal={meal} />
+                                    :null
+                                }                        
+                            </>
+                    }
                 </Main>
-                { (screenStyle === 'desktop')?<Footer />:null }
+                {(screenStyle === 'desktop')
+                    ?<Footer />
+                    :null 
+                }
             </Wrapper>
         )
     }

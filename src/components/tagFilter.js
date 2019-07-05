@@ -1,5 +1,4 @@
 import React from 'react'
-import { StaticQuery, graphql } from 'gatsby'
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import global from '../variables.global'
@@ -29,6 +28,7 @@ const TagDetailsSection = styled.div`
         flex: 0 0 40%;
     }
     & > .tag-container {
+        flex: 1;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: 2px;
@@ -87,6 +87,10 @@ const InputContainer = styled.div`
     flex-direction: row;
     justify-content: center;
     margin: 10px 0;
+
+    &.tablet {
+        margin: 0 0 10px 0;
+    }
     
     & > input {
         min-width: 200px;
@@ -123,65 +127,47 @@ const InputContainer = styled.div`
         }
     }
 `
-const ActiveTagButton = styled.button`
-    display: inline-block;
-    position: relative;
-    background-color: ${global.colors.orange};
-    color: #fff;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: all .25s ease;
-
-    &.tablet {
-        font-size: 16px;
-        border-radius: 4px;
-        margin: 2px;
-    } 
-    &.desktop {
-        font-size: 14px;
-        border-radius: 4px;
-        margin: 2px;
-        padding: 5px;
-
-    }
-
-    &.tag-enter {
-        opacity: 0;
-    }
-    &.tag-enter-active {
-        opacity: 1;
-    }
-    &.tag-exit {
-        opacity: 1;
-    }
-    &.tag-exit-active {
-        opacity: 0;
-    }
-    &:focus {
-        outline: none;
-    }
-`
-
 const TagButton = styled.button`
     display: inline-block;
     position: relative;
     background-color: ${global.colors.lightBlue};
     color: #fff;
-    padding: 10px;
+    padding: 10px 10px 7px 10px;
+    max-height: 80px;
+    max-width: 500px;
     font-weight: bold;
     font-size: 18px;
     border: none;
+    border-bottom: 3px solid transparent;
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     transition: all .25s ease;
+
+    &.active {
+        background-color: ${global.colors.orange};
+    }
+    &.active {
+        background-color: ${global.colors.orange};
+        color: #000;
+    }
+    &:focus {
+        border-color: ${global.colors.lightOrange};
+        outline: none;
+    }
+    &:hover {
+        border-color: ${global.colors.orange};
+        outline: none;
+    }
+    &.active:focus {
+        border-color: ${global.colors.lightBlue};
+        outline: none;
+    }
+    &.active:hover {
+        border-color: ${global.colors.blue};
+        outline: none;
+    }
 
     &.tablet {
         font-size: 16px;
@@ -192,23 +178,25 @@ const TagButton = styled.button`
         font-size: 14px;
         border-radius: 4px;
         margin: 2px;
-        padding: 5px;
     }
-
     &.tag-enter {
         opacity: 0;
+        max-width: 0;
+        padding: 0;
     }
     &.tag-enter-active {
         opacity: 1;
+        max-width: 500px;
+        padding: 10px 10px 7px 10px;
     }
     &.tag-exit {
         opacity: 1;
+        padding: 10px 10px 7px 10px;
     }
     &.tag-exit-active {
         opacity: 0;
-    }
-    &:focus {
-        outline: none;
+        padding: 0;
+        max-width: 0;
     }
 `
 class TagFilter extends React.Component {
@@ -216,6 +204,7 @@ class TagFilter extends React.Component {
         super(props)
         this.state = {
             screenStyle: this.props.screenStyle,
+            allTags: this.props.allTags || [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
             filter: this.props.filter,
             searchQuery: '',
             onClickFunction: this.props.onClickFunction
@@ -247,75 +236,61 @@ class TagFilter extends React.Component {
     componentWillReceiveProps = (nextProps) => {
         this.setState({
             screenStyle: nextProps.screenStyle,
-            filter: nextProps.filter
+            filter: nextProps.filter,
+            allTags: nextProps.allTags
         })
     }
 
     render = () => {
-        console.log('rendered')
-        const { screenStyle, filter, searchQuery, onClickFunction } = this.state
+        const { screenStyle, filter, allTags, searchQuery, onClickFunction } = this.state
         return (
-            <StaticQuery
-                query={graphql`
-                    query {
-                        allTags {
-                            nodes {
-                                alternative_id
-                                name
+            <Container className={screenStyle}>
+                <TagDetailsSection className={screenStyle}>
+                    {(screenStyle === 'tablet')
+                    ?<TransitionGroup className='tag-container'>
+                        {filter.map((tag) => {
+                            return (
+                                <CSSTransition key={`active_${tag}`} timeout={250} classNames={`tag`}>
+                                    <TagButton value={tag} onClick={onClickFunction} className={`${screenStyle} active`}>{tag}</TagButton>
+                                </CSSTransition>
+                            )
+                        })}
+                    </TransitionGroup>
+                    :null}
+                    <Title className={screenStyle}>Tags</Title>
+                    <Description className={screenStyle}>Specify tags to search by.</Description>
+                </TagDetailsSection>
+                <TagFilterSection className={screenStyle}>
+                    {(screenStyle !== 'tablet')
+                    ?<TransitionGroup className='tag-container'>
+                        {filter.map((tag) => {
+                            return (
+                                <CSSTransition key={`active_${tag}`} timeout={250} classNames={`tag`}>
+                                    <TagButton value={tag} onClick={onClickFunction} className={`${screenStyle} active`}>{tag}</TagButton>
+                                </CSSTransition>
+                            )
+                        })}
+                    </TransitionGroup>
+                    :null}
+                    <InputContainer className={screenStyle}>
+                        <input onChange={this.updateSearchQuery} value={searchQuery} placeholder={`Search for tags`} />
+                        <button onClick={this.clearSearchQuery}>&times;</button>
+                    </InputContainer>
+                    <TransitionGroup className='tag-container'>
+                        {allTags.map((tag) => {
+                            if (tag.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                                return (
+                                    <CSSTransition key={`all_${tag.id}`} timeout={250} classNames={`tag`}>
+                                        <TagButton value={tag.name} onClick={onClickFunction} className={screenStyle}>{tag.name}</TagButton>
+                                    </CSSTransition>
+                                ) 
+                            } else {
+                                return false
                             }
-                        }
-                    }
-                `}
-                render={data => (
-                    <Container className={screenStyle}>
-                        <TagDetailsSection className={screenStyle}>
-                            {(screenStyle === 'tablet')
-                           ?<TransitionGroup className='tag-container'>
-                                {filter.map((tag, index) => {
-                                    return (
-                                        <CSSTransition key={index} timeout={250} classNames={`tag`}>
-                                            <ActiveTagButton value={tag} onClick={onClickFunction} className={screenStyle}>{tag}</ActiveTagButton>
-                                        </CSSTransition>
-                                    )
-                                })}
-                            </TransitionGroup>
-                           :null}
-                            <Title className={screenStyle}>Tags</Title>
-                            <Description className={screenStyle}>Specify tags to search by.</Description>
-                        </TagDetailsSection>
-                        <TagFilterSection className={screenStyle}>
-                            {(screenStyle !== 'tablet')
-                           ?<TransitionGroup className='tag-container'>
-                                {filter.map((tag, index) => {
-                                    return (
-                                        <CSSTransition key={index} timeout={250} classNames={`tag`}>
-                                            <ActiveTagButton value={tag} onClick={onClickFunction} className={screenStyle}>{tag}</ActiveTagButton>
-                                        </CSSTransition>
-                                    )
-                                })}
-                            </TransitionGroup>
-                           :null}
-                            <InputContainer>
-                                <input onChange={this.updateSearchQuery} value={searchQuery} placeholder={`Search for tags`} />
-                                <button onClick={this.clearSearchQuery}>&times;</button>
-                            </InputContainer>
-                            <TransitionGroup className='tag-container'>
-                                {data.allTags.nodes.map((tag, index) => {
-                                    if (tag.name.toLowerCase().includes(searchQuery.toLowerCase()) && !filter.includes(tag.name)) {
-                                        return (
-                                            <CSSTransition key={index} timeout={250} classNames={`tag`}>
-                                                <TagButton value={tag.name} onClick={onClickFunction} className={screenStyle}>{tag.name}</TagButton>
-                                            </CSSTransition>
-                                        ) 
-                                    } else {
-                                        return false
-                                    }
-                                })}
-                            </TransitionGroup>
-                        </TagFilterSection>
-                    </Container>
-                )}
-            />            
+                        })}
+                    </TransitionGroup>
+                </TagFilterSection>
+            </Container>
         )
     }   
 }
