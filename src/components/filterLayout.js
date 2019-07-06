@@ -58,7 +58,7 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
         return (
             <Layout>
                 <Title>{title}</Title>
-                <Description>{description}</Description>            
+                <Description>{description}</Description>
                 <Container>
                     {children}
                 </Container>

@@ -7,7 +7,7 @@ import GetMealButton from './getMealButton'
 import About from './about'
 import Menu from './menu'
 
-const Header = ({ screenStyle, getMealFunction }) => {
+const Header = ({ screenStyle, loading, error, getMealFunction }) => {
     const Container = styled.header`
         flex-shrink: 0;
         display: flex;
@@ -30,7 +30,10 @@ const Header = ({ screenStyle, getMealFunction }) => {
                 </HeaderSection>
                 <HeaderSection flex='1 1 auto'>
                     <Title>Something to Cook</Title>
-                    <GetMealButton getMealFunction={getMealFunction} />
+                    {(!loading && !error)
+                        ?<GetMealButton getMealFunction={getMealFunction} />
+                        :null
+                    }
                 </HeaderSection>
             </Container>
         )
@@ -61,7 +64,10 @@ const Header = ({ screenStyle, getMealFunction }) => {
                     <About />
                 </HeaderSection>
                 <HeaderSection flex='0 0 140px'>
-                <GetMealButton getMealFunction={getMealFunction} />
+                {(!loading && !error)
+                    ?<GetMealButton getMealFunction={getMealFunction} />
+                    :null
+                }
                 </HeaderSection>
             </Container>
         )

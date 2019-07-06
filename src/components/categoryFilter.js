@@ -1,24 +1,9 @@
 import React from 'react'
-import { StaticQuery, graphql } from 'gatsby'
 import FilterLayout from './filterLayout'
 import FilterContainer from './filterContainer'
 
-export default ({ screenStyle, filter, onClickFunction }) => (
-    <StaticQuery 
-        query={graphql`
-        query {
-            allCategories {
-              nodes {
-                alternative_id
-                name
-              }
-            }
-          }          
-        `}
-        render={data => (
-            <FilterLayout screenStyle={screenStyle} title={`Origins`} description={`From what part of the world the dish originated or became popular.`}>
-                <FilterContainer data={data.allCategories.nodes} filter={filter} onClickFunction={onClickFunction} />
-            </FilterLayout> 
-        )}
-    />
+export default ({ screenStyle, allCategories, filter, onClickFunction }) => (
+    <FilterLayout screenStyle={screenStyle} title={`Categories`} description={`What the dish is primarily focused on.`}>
+        <FilterContainer data={allCategories} filter={filter} onClickFunction={onClickFunction} />
+    </FilterLayout> 
 )
