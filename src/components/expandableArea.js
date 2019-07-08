@@ -12,26 +12,31 @@ class ExpandableArea extends React.Component {
         this.checked = false
         this.expandFunction = this.props.expandFunction
         this.collapseFunction = this.props.collapseFunction
+        this.windowResizeCollapseTimeout = false
         this.windowResizeTimeout = false
     }
 
     windowListener = () => {
+        clearTimeout(this.windowResizeCollapseTimeout)
+        this.windowResizeCollapseTimeout = setTimeout(() => { this.setState({ active: false}) }, 250)
+
         clearTimeout(this.windowResizeTimeout)
         this.windowResizeTimeout = setTimeout(this.calculateHeightDifference, 250)
     }
 
     calculateHeightDifference = () => {
+        console.log('calculateHeightDifference()')
         const container = document.getElementById('result-expandable-container')
         const content = document.getElementById('result-expandable-content')
         const containerHeight = container.offsetHeight
         const contentHeight = content.offsetHeight
 
         if (contentHeight > containerHeight) {
-            this.setState({ needed: true, active: false })
+            this.setState({ needed: true })
             this.checked = true
             this.collapseFunction()
         } else {
-            this.setState({ needed: false, active: false })
+            this.setState({ needed: false })
             this.checked = true
         }
     }
@@ -54,6 +59,7 @@ class ExpandableArea extends React.Component {
     }
 
     componentWillReceiveProps = async () => {
+        console.log('componentWillReceiveProps()')
         await this.setState({ 
             needed: false, 
             active: false,
@@ -63,6 +69,7 @@ class ExpandableArea extends React.Component {
     }
 
     componentDidUpdate = () => {
+        console.log('componentDidUpdate()')
         if (!this.checked) {
             this.calculateHeightDifference()
         } else {
@@ -73,6 +80,7 @@ class ExpandableArea extends React.Component {
     render = () => {
         const { collapsedHeight, active } = this.state
         const { children } = this.props
+        console.log('expandable area active?', active)
         let Container
         if (active) {
             Container = styled.div`
