@@ -176,7 +176,7 @@ class MenuModule extends React.Component {
                         </button>
                     </div>
                     <p>A simple interface to help cooks find things to make using the STC API database.</p>
-                    <Anchor href='https://github.com/shnibble/stc-api' target='_BLANK'>Explore the API</Anchor>
+                    <Anchor href='https://api.somethingtocook.com' target='_BLANK'>Explore the API</Anchor>
                     <Anchor href='https://github.com/shnibble/stc-app' target='_BLANK'>View on Github</Anchor>
                 </Container>
             </>

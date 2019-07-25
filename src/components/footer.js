@@ -31,7 +31,7 @@ const Footer = () => {
             <p>
                 <span>SomethingToCook.com &copy;</span>
                 | 
-                <span>Explore the <a href='https://github.com/shnibble/stc-api'>STC API</a></span>
+                <span>Explore the <a href='https://api.somethingtocook.com'>STC API</a></span>
                 | 
                 <span>View on <a href='https://github.com/shnibble/stc-app'>Github</a></span>
             </p>

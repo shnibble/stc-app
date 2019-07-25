@@ -114,7 +114,7 @@ class AboutModule extends React.Component {
                     <Container className={(this.state.active)?'active':null}>
                         <div className='carrot'></div>
                         <p>A simple interface to help cooks find things to make using the STC API database.</p>                    
-                        <Anchor href='https://github.com/shnibble/stc-api'>Explore the API</Anchor>
+                        <Anchor href='https://api.somethingtocook.com>Explore the API</Anchor>
                         <Anchor href='https://github.com/shnibble/stc-app'>View on Github</Anchor>
                     </Container>
                 </Button>
