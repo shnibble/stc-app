@@ -25,7 +25,6 @@ class ExpandableArea extends React.Component {
     }
 
     calculateHeightDifference = () => {
-        console.log('calculateHeightDifference()')
         const container = document.getElementById('result-expandable-container')
         const content = document.getElementById('result-expandable-content')
         const containerHeight = container.offsetHeight
@@ -42,7 +41,6 @@ class ExpandableArea extends React.Component {
     }
 
     expand = () => {
-        console.log('expand()')
         const contentHeight = document.getElementById('result-expandable-content').offsetHeight 
         this.expandFunction(contentHeight+30)
         this.setState({ active: true })
@@ -59,7 +57,6 @@ class ExpandableArea extends React.Component {
     }
 
     componentWillReceiveProps = async () => {
-        console.log('componentWillReceiveProps()')
         await this.setState({ 
             needed: false, 
             active: false,
@@ -69,7 +66,6 @@ class ExpandableArea extends React.Component {
     }
 
     componentDidUpdate = () => {
-        console.log('componentDidUpdate()')
         if (!this.checked) {
             this.calculateHeightDifference()
         } else {
@@ -80,7 +76,6 @@ class ExpandableArea extends React.Component {
     render = () => {
         const { collapsedHeight, active } = this.state
         const { children } = this.props
-        console.log('expandable area active?', active)
         let Container
         if (active) {
             Container = styled.div`
