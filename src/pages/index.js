@@ -40,7 +40,7 @@ const Main = styled.main`
     }
 `
 const initialState = {
-    screenStyle: 'mobile',
+    screenStyle: false,
     allCategories: [],
     allOrigins: [],
     allTags: [],
@@ -320,19 +320,14 @@ class Index extends React.Component {
             }
     }
 
-    componentWillMount = async () => {
+    componentWillMount = () => {
         if (!this.initialWindowSizeChecked) {
+            window.addEventListener('resize', this.windowListener)
             this.initialWindowSizeChecked = true
             this.processScreenSize()
         }
         this.pullStateFromLocalStorage()
-        await this.loadMetaData()
-    }
-
-    componentDidMount = () => {
-        // window resizing
-        window.addEventListener('resize', this.windowListener)
-        this.processScreenSize()
+        this.loadMetaData()
     }
 
     componentWillUnmount = () => {
@@ -343,6 +338,8 @@ class Index extends React.Component {
     render = () => {
         const { screenStyle, loadingMeta, metaError, loadingResult, resultError, resultErrorMessage, allCategories, allOrigins, allTags, filteredCategories, filteredOrigins, filteredTags, meal } = this.state
         return (
+            (screenStyle)
+            ?
             <Wrapper>
                 <Header screenStyle={screenStyle} loading={loadingMeta} error={metaError} getMealFunction={this.fetchMeal}/>
                 <Main>
@@ -379,6 +376,8 @@ class Index extends React.Component {
                     :null 
                 }
             </Wrapper>
+            :
+            null
         )
     }
 }
