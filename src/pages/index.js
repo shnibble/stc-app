@@ -68,6 +68,7 @@ class Index extends React.Component {
         super(props)
         this.state = initialState
         this.windowResizeTimeout = false
+        this.initialWindowSizeChecked = false
     }
 
     saveStateToLocalStorage = () => {
@@ -320,6 +321,10 @@ class Index extends React.Component {
     }
 
     componentWillMount = async () => {
+        if (!this.initialWindowSizeChecked) {
+            this.initialWindowSizeChecked = true
+            this.processScreenSize()
+        }
         this.pullStateFromLocalStorage()
         await this.loadMetaData()
     }
