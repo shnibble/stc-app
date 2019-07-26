@@ -6,19 +6,16 @@ class ExpandableArea extends React.Component {
         super(props)
         this.state = {
             needed: false,
-            active: false,
-            collapsedHeight: this.props.collapsedHeight
+            active: false
         }
         this.checked = false
-        this.expandFunction = this.props.expandFunction
-        this.collapseFunction = this.props.collapseFunction
         this.windowResizeCollapseTimeout = false
         this.windowResizeTimeout = false
     }
 
     windowListener = () => {
         clearTimeout(this.windowResizeCollapseTimeout)
-        this.windowResizeCollapseTimeout = setTimeout(() => { this.setState({ active: false}) }, 250)
+        this.windowResizeCollapseTimeout = setTimeout(this.collapse, 250)
 
         clearTimeout(this.windowResizeTimeout)
         this.windowResizeTimeout = setTimeout(this.calculateHeightDifference, 250)
@@ -33,7 +30,7 @@ class ExpandableArea extends React.Component {
         if (contentHeight > containerHeight) {
             this.setState({ needed: true })
             this.checked = true
-            this.collapseFunction()
+            this.props.collapseFunction()
         } else {
             this.setState({ needed: false })
             this.checked = true
@@ -42,8 +39,13 @@ class ExpandableArea extends React.Component {
 
     expand = () => {
         const contentHeight = document.getElementById('result-expandable-content').offsetHeight 
-        this.expandFunction(contentHeight+30)
+        this.props.expandFunction(contentHeight+30)
         this.setState({ active: true })
+    }
+
+    collapse = () => {
+        this.props.collapseFunction()
+        this.setState({ active: false })
     }
 
     componentDidMount = () => {
@@ -53,14 +55,15 @@ class ExpandableArea extends React.Component {
 
     componentWillUnmount = () => {
         window.removeEventListener('resize', this.windowListener)
+        this.collapse()
         clearTimeout(this.windowResizeTimeout)
+        clearTimeout(this.windowResizeCollapseTimeout)
     }
 
     componentWillReceiveProps = async () => {
         await this.setState({ 
             needed: false, 
             active: false,
-            collapsedHeight: this.props.collapsedHeight
         })
         this.calculateHeightDifference()
     }
@@ -74,8 +77,8 @@ class ExpandableArea extends React.Component {
     }
 
     render = () => {
-        const { collapsedHeight, active } = this.state
-        const { children } = this.props
+        const { active } = this.state
+        const { collapsedHeight, children } = this.props
         let Container
         if (active) {
             Container = styled.div`
