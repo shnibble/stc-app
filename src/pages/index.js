@@ -321,13 +321,16 @@ class Index extends React.Component {
     }
 
     componentWillMount = () => {
-        if (!this.initialWindowSizeChecked) {
-            window.addEventListener('resize', this.windowListener)
-            this.initialWindowSizeChecked = true
-            this.processScreenSize()
+        if (typeof window !== 'undefined') {
+            if (!this.initialWindowSizeChecked) {
+                window.addEventListener('resize', this.windowListener)
+                this.initialWindowSizeChecked = true
+                this.processScreenSize()
+            }
+            this.pullStateFromLocalStorage()
+            this.loadMetaData()
         }
-        this.pullStateFromLocalStorage()
-        this.loadMetaData()
+        
     }
 
     componentWillUnmount = () => {
