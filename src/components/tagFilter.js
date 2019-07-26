@@ -203,11 +203,7 @@ class TagFilter extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            screenStyle: this.props.screenStyle,
-            allTags: this.props.allTags || [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
-            filter: this.props.filter,
-            searchQuery: '',
-            onClickFunction: this.props.onClickFunction
+            searchQuery: ''
         }
     }
 
@@ -219,30 +215,9 @@ class TagFilter extends React.Component {
         this.setState({ searchQuery: '' })
     }
 
-    toggleFilteredTag = (ev) => {
-        const name = ev.target.value
-        const tempArray = this.state.filter.slice()
-        const activeIndex = tempArray.indexOf(name)
-        if (activeIndex !== -1) {
-            tempArray.splice(activeIndex, 1)
-        } else {
-            tempArray.push(name)
-        }
-        this.setState({
-            filter: tempArray
-        })
-    }
-
-    componentWillReceiveProps = (nextProps) => {
-        this.setState({
-            screenStyle: nextProps.screenStyle,
-            filter: nextProps.filter,
-            allTags: nextProps.allTags
-        })
-    }
-
     render = () => {
-        const { screenStyle, filter, allTags, searchQuery, onClickFunction } = this.state
+        const { screenStyle, filter, allTags, onClickFunction } = this.props
+        const { searchQuery } = this.state
         return (
             <Container className={screenStyle}>
                 <TagDetailsSection className={screenStyle}>

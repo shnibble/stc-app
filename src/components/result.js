@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { scrollMainToTop } from '../functions'
 import CardTab from '../components/cardTab'
 import ExpandableArea from '../components/expandableArea'
 import LoadingAnimation from '../components/loadingAnimation'
@@ -73,17 +72,6 @@ const CardImage = styled.div`
 `
 
 class Result extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            screenStyle: props.screenStyle,
-            error: props.error,
-            errorMessage: props.errorMessage,
-            loading: props.loading,
-            meal: props.meal
-        }
-    }
-
     expandCard = (newHeight) => {
         const el = document.getElementById('card')
         el.style.height = newHeight + 'px'
@@ -94,34 +82,8 @@ class Result extends React.Component {
         el.style.removeProperty('height')
     }
 
-    componentWillReceiveProps = (nextProps) => {       
-        if  (
-            nextProps.screenStyle !== this.state.screenStyle ||
-            nextProps.loading !== this.state.loading ||
-            nextProps.error !== this.state.error ||
-            nextProps.errorMessage !== this.state.errorMessage ||
-            nextProps.meal !== this.state.meal
-        ) {
-            this.setState({
-                screenStyle: nextProps.screenStyle,
-                error: nextProps.error,
-                errorMessage: nextProps.errorMessage,
-                loading: nextProps.loading,
-                meal: nextProps.meal
-            })
-            const el = document.getElementById('card')
-            if (el !== null) {
-                el.style.removeProperty('height')
-            }
-
-            if (this.state.screenStyle !== 'desktop') {
-                scrollMainToTop()
-            }
-        }  
-    }
-
     render = () => {
-        const { screenStyle, error, errorMessage, loading, meal } = this.state
+        const { screenStyle, error, errorMessage, loading, meal } = this.props
         const categories = (meal.categories[0] !== null)?meal.categories.map((category) => category ):[]
         const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
         const tags = (meal.tags[0] !== null)?meal.tags.map((tag) => tag ):[]

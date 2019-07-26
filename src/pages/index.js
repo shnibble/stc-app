@@ -11,6 +11,7 @@ import OriginFilter from '../components/originFilter'
 import TagFilter from '../components/tagFilter'
 import Result from '../components/result'
 import LoadingAnimation from '../components/loadingAnimation';
+import { scrollMainToTop } from '../functions'
 
 const Wrapper = styled.div`
     position: fixed;
@@ -181,26 +182,10 @@ class Index extends React.Component {
         
     }
 
-    shouldComponentUpdate = (nextProps, nextState) => {
-        if  (
-                nextState.screenStyle !== this.state.screenStyle ||
-                nextState.loadingMeta !== this.state.loadingMeta ||
-                nextState.metaError !== this.state.metaError ||
-                nextState.loadingResult !== this.state.loadingResult ||
-                nextState.resultError !== this.state.resultError ||
-                nextState.allTags !== this.state.allTags ||
-                nextState.filteredTags !== this.state.filteredTags
-            ) {
-                return true
-            } else {
-                return false
-        }
-    }
-
     toggleFilteredCategory = async (ev) => {
         const name = ev.target.value
         const tempArray = this.state.filteredCategories.slice()
-        const activeIndex = tempArray.indexOf(name)
+        const activeIndex = tempArray.indexOf(name)        
         if (activeIndex !== -1) {
             tempArray.splice(activeIndex, 1)
         } else {
@@ -329,6 +314,9 @@ class Index extends React.Component {
                     resultErrorMessage: 'The API server returned an error or could not be reached. Try your search again in a moment.'
                 })
             })
+            if (this.state.screenStyle !== 'desktop') {
+                scrollMainToTop()
+            }
     }
 
     componentWillMount = async () => {
