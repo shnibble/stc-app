@@ -7,7 +7,8 @@ import Header from '../components/header'
 import GetMealButton from '../components/getMealButton'
 import Footer from '../components/footer'
 import CategoryFilter from '../components/categoryFilter'
-import OriginFilter from '../components/originFilter'
+// import OriginFilter from '../components/originFilter'
+import TimeFilter from '../components/timeFilter'
 import TagFilter from '../components/tagFilter'
 import Result from '../components/result'
 import LoadingAnimation from '../components/loadingAnimation';
@@ -42,13 +43,15 @@ const Main = styled.main`
 const initialState = {
     screenStyle: false,
     allCategories: [],
-    allOrigins: [],
+    // allOrigins: [],
+    allTimes: [],
     allTags: [],
     loadingMeta: false,
     metaError: false,
     metaErrorMessage: '',
     filteredCategories: [],
-    filteredOrigins: [],
+    // filteredOrigins: [],
+    filteredTime: 0,
     filteredTags: [],
     loadingResult: false,
     resultError: false,
@@ -56,6 +59,7 @@ const initialState = {
     meal: {
         name: '',
         description: '',
+        time: '',
         image: '',
         categories: [],
         origins: [],
@@ -73,10 +77,12 @@ class Index extends React.Component {
 
     saveStateToLocalStorage = () => {
         const array_1 = [...this.state.filteredCategories]
-        const array_2 = [...this.state.filteredOrigins]
+        // const array_2 = [...this.state.filteredOrigins]
+        const time = this.state.filteredTime
         const array_3 = [...this.state.filteredTags]
         localStorage.setItem('filteredCategories', JSON.stringify(array_1))
-        localStorage.setItem('filteredOrigins', JSON.stringify(array_2))
+        // localStorage.setItem('filteredOrigins', JSON.stringify(array_2))
+        localStorage.setItem('filteredTime', JSON.stringify(time))
         localStorage.setItem('filteredTags', JSON.stringify(array_3))
     }
 
@@ -90,13 +96,22 @@ class Index extends React.Component {
                 this.SetState({ filteredCategories: value })
             }
         }
-        if (localStorage.hasOwnProperty('filteredOrigins')) {
-            let value = localStorage.getItem('filteredOrigins')
+        // if (localStorage.hasOwnProperty('filteredOrigins')) {
+        //     let value = localStorage.getItem('filteredOrigins')
+        //     try {
+        //         value = JSON.parse(value)
+        //         this.setState({ filteredOrigins: value })
+        //     } catch(e) {
+        //         this.SetState({ filteredOrigins: value })
+        //     }
+        // }
+        if (localStorage.hasOwnProperty('filteredTime')) {
+            let value = localStorage.getItem('filteredTime')
             try {
                 value = JSON.parse(value)
-                this.setState({ filteredOrigins: value })
+                this.setState({ filteredTime: value })
             } catch(e) {
-                this.SetState({ filteredOrigins: value })
+                this.SetState({ filteredTime: value })
             }
         }
         if (localStorage.hasOwnProperty('filteredTags')) {
@@ -133,11 +148,12 @@ class Index extends React.Component {
     loadMetaData = async () => {
         this.setState({ loadingMeta: true })
         let categories = false
-        let origins = false
+        // let origins = false
+        let times = false
         let tags = false
         
         await axios
-            .get(`https://api.somethingtocook.com/meta/categories`)
+            .get(`http://localhost:3000/meta/categories`)
             .then(result => categories = result.data)
             .catch(err => {
                 this.setState({
@@ -147,19 +163,30 @@ class Index extends React.Component {
                 })
                 return false
             })
+        // await axios
+        //     .get(`http://localhost:3000/meta/origins`)
+        //     .then(result => origins = result.data)
+        //     .catch(err => {
+        //         this.setState({
+        //             loadingMeta: false,
+        //             metaError: true,
+        //             metaErrorMessage: 'Failed to load origins from the API.',
+        //         })
+        //         return false
+        //     })
         await axios
-            .get(`https://api.somethingtocook.com/meta/origins`)
-            .then(result => origins = result.data)
+            .get(`http://localhost:3000/meta/times`)
+            .then(result => times = result.data)
             .catch(err => {
                 this.setState({
                     loadingMeta: false,
                     metaError: true,
-                    metaErrorMessage: 'Failed to load origins from the API.',
+                    metaErrorMessage: 'Failed to load times from the API.',
                 })
                 return false
             })
         await axios
-            .get(`https://api.somethingtocook.com/meta/tags`)
+            .get(`http://localhost:3000/meta/tags`)
             .then(result => tags = result.data)
             .catch(err => {
                 this.setState({
@@ -170,12 +197,13 @@ class Index extends React.Component {
                 return false
             })
 
-        if (categories.length > 0 && origins.length > 0 && tags.length > 0) {
+        if (categories.length > 0 && times.length > 0 && tags.length > 0) {
             await this.setState({
                 loadingMeta: false,
                 metaError: false,
                 allCategories: categories,
-                allOrigins: origins,
+                // allOrigins: origins,
+                allTimes: times,
                 allTags: tags
             })
             return true
@@ -198,18 +226,24 @@ class Index extends React.Component {
         this.saveStateToLocalStorage()
     }
 
-    toggleFilteredOrigin = async (ev) => {
-        const name = ev.target.value
-        const tempArray = this.state.filteredOrigins.slice()
-        const activeIndex = tempArray.indexOf(name)
-        if (activeIndex !== -1) {
-            tempArray.splice(activeIndex, 1)
-        } else {
-            tempArray.push(name)
-        }
-        await this.setState({
-            filteredOrigins: tempArray
-        })
+    // toggleFilteredOrigin = async (ev) => {
+    //     const name = ev.target.value
+    //     const tempArray = this.state.filteredOrigins.slice()
+    //     const activeIndex = tempArray.indexOf(name)
+    //     if (activeIndex !== -1) {
+    //         tempArray.splice(activeIndex, 1)
+    //     } else {
+    //         tempArray.push(name)
+    //     }
+    //     await this.setState({
+    //         filteredOrigins: tempArray
+    //     })
+    //     this.saveStateToLocalStorage()
+    // }
+
+    changeFilteredTime = async (ev) => {
+        const time = ev.target.value
+        await this.setState({ filteredTime: time })
         this.saveStateToLocalStorage()
     }
 
@@ -239,32 +273,42 @@ class Index extends React.Component {
                 return `?categories[]=${cat}`
             } else {
                 return `&categories[]=${cat}`
-            }
-            
+            }            
         }).join('')
-        const queryStringOrigins = this.state.filteredOrigins.map((ori) => {
+
+        // const queryStringOrigins = this.state.filteredOrigins.map((ori) => {
+        //     if (firstParam) {
+        //         firstParam = false
+        //         return `?origins[]=${ori}`
+        //     } else {
+        //         return `&origins[]=${ori}`
+        //     }            
+        // }).join('')
+
+        let queryStringTime = ''
+        if (this.state.filteredTime > 0) {
             if (firstParam) {
                 firstParam = false
-                return `?origins[]=${ori}`
+                queryStringTime = `?time=${this.state.filteredTime}`
             } else {
-                return `&origins[]=${ori}`
-            }
-            
-        }).join('')
+                queryStringTime = `&time=${this.state.filteredTime}`
+            } 
+        }
+
         const queryStringTags = this.state.filteredTags.map((tag) => {
             if (firstParam) {
                 firstParam = false
                 return `?tags[]=${tag}`
             } else {
                 return `&tags[]=${tag}`
-            }
-            
+            }            
         }).join('')
+
         const queryStringDetails = (firstParam)?`?limit=1&order=RANDOM`:`&limit=1&order=RANDOM`
-        const queryString = `${queryStringCategories}${queryStringOrigins}${queryStringTags}${queryStringDetails}`
+        const queryString = `${queryStringCategories}${queryStringTime}${queryStringTags}${queryStringDetails}`
 
         axios
-            .get(`https://api.somethingtocook.com/meals${queryString}`)
+            .get(`http://localhost:3000/meals${queryString}`)
             .then(result => {
                 // the first element of result.data array will be meta data, subsequent elements are potentially results
                 const { error, errorMessage, resultsFound } = result.data[0]
@@ -292,16 +336,17 @@ class Index extends React.Component {
                     })
                 } else {
                     // good response
-                    const { name, description, image, categories, origins, tags } = result.data[1]
+                    const { name, description, prep_time, image, categories, tags } = result.data[1]
                     this.setState({  
                         loadingResult: false,
                         resultError: false,
                         meal: {
                             name: name,
                             description: description,
+                            time: prep_time,
                             image: image,
                             categories: categories,
-                            origins: origins,
+                            // origins: origins,
                             tags: tags
                         }
                     })
@@ -339,7 +384,7 @@ class Index extends React.Component {
     }
     
     render = () => {
-        const { screenStyle, loadingMeta, metaError, loadingResult, resultError, resultErrorMessage, allCategories, allOrigins, allTags, filteredCategories, filteredOrigins, filteredTags, meal } = this.state
+        const { screenStyle, loadingMeta, metaError, loadingResult, resultError, resultErrorMessage, allCategories, allTimes, allTags, filteredCategories, filteredTime, filteredTags, meal } = this.state
         return (
             (screenStyle)
             ?
@@ -360,7 +405,8 @@ class Index extends React.Component {
                                 }
                                 <div id="filters">
                                     <CategoryFilter screenStyle={screenStyle} allCategories={allCategories} filter={filteredCategories} onClickFunction={this.toggleFilteredCategory} />
-                                    <OriginFilter screenStyle={screenStyle} allOrigins={allOrigins} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} />
+                                    {/* <OriginFilter screenStyle={screenStyle} allOrigins={allOrigins} filter={filteredOrigins} onClickFunction={this.toggleFilteredOrigin} /> */}
+                                    <TimeFilter screenStyle={screenStyle} allTimes={allTimes} filter={filteredTime} onClickFunction={this.changeFilteredTime} />
                                     <TagFilter screenStyle={screenStyle} allTags={allTags} filter={filteredTags} onClickFunction={this.toggleFilteredTag} />                 
                                 </div>
                                 {(screenStyle === 'desktop')

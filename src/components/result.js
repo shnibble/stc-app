@@ -70,6 +70,15 @@ const CardImage = styled.div`
     }
     
 `
+const CardTime = styled.span`
+    float: right;
+    margin: 5px;
+    padding: 5px;
+    font-size: 12px;
+    color: #a6a6a6;
+    background: #f2f2f2;
+    border-radius: 3px;
+`
 
 class Result extends React.Component {
     expandCard = (newHeight) => {
@@ -85,7 +94,7 @@ class Result extends React.Component {
     render = () => {
         const { screenStyle, error, errorMessage, loading, meal } = this.props
         const categories = (meal.categories[0] !== null)?meal.categories.map((category) => category ):[]
-        const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
+        // const origins = (meal.origins[0] !== null)?meal.origins.map((origin) => origin ):[]
         const tags = (meal.tags[0] !== null)?meal.tags.map((tag) => tag ):[]
 
         let content = null
@@ -100,10 +109,11 @@ class Result extends React.Component {
             content =   <Card id='card'>
                             <CardSectionLeft>
                                 <ExpandableArea collapsedHeight={210} expandFunction={this.expandCard} collapseFunction={this.collapseCard}>
+                                    <CardTime>{meal.time}</CardTime>
                                     <CardTitle>{meal.name}</CardTitle>
                                     <TabsContainer>
                                         <CardTab title='Categories' items={categories} />
-                                        <CardTab title='Origins' items={origins} />
+                                        {/* <CardTab title='Origins' items={origins} /> */}
                                         <CardTab title='Tags' items={tags} />
                                     </TabsContainer>
                                     <CardDescription>{meal.description}</CardDescription>
