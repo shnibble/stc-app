@@ -153,7 +153,7 @@ class Index extends React.Component {
         let tags = false
         
         await axios
-            .get(`http://localhost:3000/meta/categories`)
+            .get(`https://api.somethingtocook.com/meta/categories`)
             .then(result => categories = result.data)
             .catch(err => {
                 this.setState({
@@ -164,7 +164,7 @@ class Index extends React.Component {
                 return false
             })
         // await axios
-        //     .get(`http://localhost:3000/meta/origins`)
+        //     .get(`https://api.somethingtocook.com/meta/origins`)
         //     .then(result => origins = result.data)
         //     .catch(err => {
         //         this.setState({
@@ -175,7 +175,7 @@ class Index extends React.Component {
         //         return false
         //     })
         await axios
-            .get(`http://localhost:3000/meta/times`)
+            .get(`https://api.somethingtocook.com/meta/times`)
             .then(result => times = result.data)
             .catch(err => {
                 this.setState({
@@ -186,7 +186,7 @@ class Index extends React.Component {
                 return false
             })
         await axios
-            .get(`http://localhost:3000/meta/tags`)
+            .get(`https://api.somethingtocook.com/meta/tags`)
             .then(result => tags = result.data)
             .catch(err => {
                 this.setState({
@@ -308,7 +308,7 @@ class Index extends React.Component {
         const queryString = `${queryStringCategories}${queryStringTime}${queryStringTags}${queryStringDetails}`
 
         axios
-            .get(`http://localhost:3000/meals${queryString}`)
+            .get(`https://api.somethingtocook.com/meals${queryString}`)
             .then(result => {
                 // the first element of result.data array will be meta data, subsequent elements are potentially results
                 const { error, errorMessage, resultsFound } = result.data[0]
