@@ -169,8 +169,6 @@ const FilterLayout = ({screenStyle, title, description, children}) => {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 cursor: pointer;
-                overflow: hidden;
-                text-overflow: ellipsis;
                 transition: background-color .25s, color .25s, border-color .25s;
                 
                 &.active {
